@@ -21,6 +21,7 @@ Changes that impact compatibility must update `README.md` and `CHANGELOG.md`.
 - One DSL method represents one feature capability.
 - DSL methods must use explicit names (`actuator()`, `security()`, `jwt()`, `oauth2Client()`, `redis()`).
 - Prefer colocating related capabilities in the same parent block (for example, web servers and web clients under `web { ... }`).
+- Companion test dependencies should be declared in `DependencyCatalog` companion maps and triggered only via `test { includeCompanionTests() }`.
 - Do not introduce hidden runtime behavior beyond plugin/dependency wiring.
 - Invalid combinations must fail with actionable `GradleException` messages.
 

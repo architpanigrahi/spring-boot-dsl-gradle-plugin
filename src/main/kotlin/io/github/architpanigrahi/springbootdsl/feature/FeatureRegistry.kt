@@ -24,4 +24,8 @@ class FeatureRegistry(
     fun isSelected(feature: SpringFeature): Boolean {
         return feature in selectedFeatures
     }
+
+    fun selectedFeatures(): Set<SpringFeature> {
+        return selectedFeatures.toSet()
+    }
 }

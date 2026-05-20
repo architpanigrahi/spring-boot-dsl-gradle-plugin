@@ -15,7 +15,7 @@ Instead of repeating standard Spring Boot plugin and dependency declarations acr
 
 | Component | Supported |
 | --- | --- |
-| Plugin version | `0.1.0` |
+| Plugin version | `0.1.1` |
 | Gradle | `9.2.1+` |
 | Java toolchain | `21` |
 | Spring Boot line | `4.0.x` |
@@ -25,7 +25,7 @@ Instead of repeating standard Spring Boot plugin and dependency declarations acr
 
 ```kotlin
 plugins {
-    id("io.github.architpanigrahi.springbootdsl") version "0.1.0"
+    id("io.github.architpanigrahi.springbootdsl") version "0.1.1"
 }
 
 repositories {
@@ -66,6 +66,7 @@ springBootPlugin {
     }
 
     test {
+        includeCompanionTests()
         springBootTest()
     }
 }
@@ -148,10 +149,6 @@ auth {
 - `security()` adds `spring-boot-starter-security`.
 - `jwt()` adds `spring-boot-starter-oauth2-resource-server`.
 - `oauth2Client()` adds `spring-boot-starter-oauth2-client`.
-- `oauth2Login()` is an alias for `oauth2Client()`.
-
-Compatibility alias block:
-- `security { ... }` still works and maps to `auth { ... }`.
 
 ### Database Migrations
 
@@ -170,19 +167,32 @@ Supported migration engines:
 
 ```kotlin
 test {
+    includeCompanionTests()
     springBootTest()
 }
 ```
 
+- `includeCompanionTests()` enables companion test dependencies for selected runtime features.
+
+Companion test dependencies (when enabled):
+
+- `web.mvc()` -> `spring-boot-starter-webmvc-test`
+- `web.reactiveServer()` -> `spring-boot-starter-webflux-test`
+- `web.restClient()` -> `spring-boot-starter-webmvc-test`
+- `web.webClient()` -> `spring-boot-starter-webflux-test`
+- `auth.security()` -> `spring-boot-starter-security-test`
+- `auth.jwt()` -> `spring-boot-starter-security-oauth2-resource-server-test`
+- `auth.oauth2Client()` -> `spring-boot-starter-security-oauth2-client-test`
+- `data.jpa()` -> `spring-boot-starter-data-jpa-test`
+- `data.redis()` -> `spring-boot-starter-data-redis-test`
+- `data.mongo()` -> `spring-boot-starter-data-mongodb-test`
+- `ops.actuator()` -> `spring-boot-starter-actuator-test`
+- `migrations.flyway()` / `migrations.liquibase()` -> `spring-boot-starter-test`
+
 ## Block Naming
 
-- `web`, `data`, `auth`, `ops`, `migrations`, `devTools`, and `test` are the preferred block names.
-- Legacy aliases are kept for backward compatibility:
-  - `security { ... }` -> `auth { ... }`
-  - `operations { ... }` -> `ops { ... }`
-  - `databaseMigrations { ... }` -> `migrations { ... }`
-  - `developerTools { ... }` -> `devTools { ... }`
-  - `testing { ... }` -> `test { ... }`
+- Canonical blocks are `web`, `data`, `auth`, `ops`, `migrations`, `devTools`, and `test`.
+- This plugin now uses a single canonical naming scheme to reduce onboarding confusion.
 
 ## Validation Behavior
 
@@ -191,6 +201,21 @@ test {
 - `restClient()` and `webClient()` can be selected together.
 - `migrations { ... }` requires exactly one engine (`flyway()` or `liquibase()`).
 - `flyway()` and `liquibase()` are mutually exclusive and fail the build if selected together.
+- Companion test dependencies are only added when `includeCompanionTests()` is selected.
+
+## Dependency Report Output
+
+When the plugin is configured, it generates a root-level file:
+
+- `springbootdsl-dependencies.txt`
+
+This report includes:
+
+- DSL feature selections (for example `web { mvc() }`)
+- Dependencies mapped for each selected feature
+- Deduplicated list of all dependencies applied by the plugin
+
+The plugin also prints the report path in the Gradle console.
 
 ## Contributor Workflow
 
@@ -201,6 +226,7 @@ test {
 
 The plugin follows semantic versioning.
 
+- `0.1.1` — Canonical DSL naming, auth expansion, companion test mappings, and dependency report output.
 - `0.1.0` — Initial public release
 
 ## Local Development

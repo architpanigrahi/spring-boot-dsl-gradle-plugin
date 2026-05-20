@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
+import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
 class SpringBootPluginFunctionalTest {
@@ -90,6 +92,7 @@ class SpringBootPluginFunctionalTest {
                     lombok()
                 }
                 test {
+                    includeCompanionTests()
                     springBootTest()
                 }
             }
@@ -116,6 +119,15 @@ class SpringBootPluginFunctionalTest {
                     check(hasDependency("compileOnly", "lombok"))
                     check(hasDependency("annotationProcessor", "lombok"))
                     check(hasDependency("testImplementation", "spring-boot-starter-test"))
+                    check(hasDependency("testImplementation", "spring-boot-starter-webmvc-test"))
+                    check(hasDependency("testImplementation", "spring-boot-starter-webflux-test"))
+                    check(hasDependency("testImplementation", "spring-boot-starter-security-test"))
+                    check(hasDependency("testImplementation", "spring-boot-starter-security-oauth2-client-test"))
+                    check(hasDependency("testImplementation", "spring-boot-starter-security-oauth2-resource-server-test"))
+                    check(hasDependency("testImplementation", "spring-boot-starter-data-jpa-test"))
+                    check(hasDependency("testImplementation", "spring-boot-starter-data-redis-test"))
+                    check(hasDependency("testImplementation", "spring-boot-starter-data-mongodb-test"))
+                    check(hasDependency("testImplementation", "spring-boot-starter-actuator-test"))
                 }
             }
             """.trimIndent(),
@@ -197,7 +209,7 @@ class SpringBootPluginFunctionalTest {
             }
 
             springBootPlugin {
-                databaseMigrations {
+                migrations {
                 }
             }
             """.trimIndent(),
@@ -206,7 +218,7 @@ class SpringBootPluginFunctionalTest {
         val result = runGradleAndFail("help")
 
         assertTrue(
-            result.output.contains("databaseMigrations { ... } requires an engine."),
+            result.output.contains("migrations { ... } requires an engine."),
             "Expected migration engine requirement error",
         )
     }
@@ -224,10 +236,10 @@ class SpringBootPluginFunctionalTest {
             }
 
             springBootPlugin {
-                databaseMigrations {
+                migrations {
                     flyway()
                 }
-                databaseMigrations {
+                migrations {
                     liquibase()
                 }
             }
@@ -278,6 +290,138 @@ class SpringBootPluginFunctionalTest {
         val result = runGradle("verifyClientDependencies")
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":verifyClientDependencies")?.outcome)
+    }
+
+    @Test
+    fun `does not add companion test dependencies unless enabled`() {
+        writeBuildFile(
+            """
+            plugins {
+                id("io.github.architpanigrahi.springbootdsl")
+            }
+
+            repositories {
+                mavenCentral()
+            }
+
+            springBootPlugin {
+                web {
+                    restClient()
+                    webClient()
+                }
+                auth {
+                    security()
+                    jwt()
+                    oauth2Client()
+                }
+            }
+
+            tasks.register("verifyNoCompanionTests") {
+                doLast {
+                    fun hasDependency(configurationName: String, dependencyName: String): Boolean =
+                        configurations.getByName(configurationName).dependencies.any { dependency ->
+                            dependency.name == dependencyName
+                        }
+
+                    check(hasDependency("testImplementation", "spring-boot-starter-webmvc-test").not())
+                    check(hasDependency("testImplementation", "spring-boot-starter-webflux-test").not())
+                    check(hasDependency("testImplementation", "spring-boot-starter-security-test").not())
+                }
+            }
+            """.trimIndent(),
+        )
+
+        val result = runGradle("verifyNoCompanionTests")
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":verifyNoCompanionTests")?.outcome)
+    }
+
+    @Test
+    fun `adds companion tests when enabled after selecting features`() {
+        writeBuildFile(
+            """
+            plugins {
+                id("io.github.architpanigrahi.springbootdsl")
+            }
+
+            repositories {
+                mavenCentral()
+            }
+
+            springBootPlugin {
+                web {
+                    restClient()
+                    webClient()
+                }
+                auth {
+                    security()
+                }
+                test {
+                    includeCompanionTests()
+                }
+            }
+
+            tasks.register("verifyLateCompanionEnable") {
+                doLast {
+                    fun hasDependency(configurationName: String, dependencyName: String): Boolean =
+                        configurations.getByName(configurationName).dependencies.any { dependency ->
+                            dependency.name == dependencyName
+                        }
+
+                    check(hasDependency("testImplementation", "spring-boot-starter-webmvc-test"))
+                    check(hasDependency("testImplementation", "spring-boot-starter-webflux-test"))
+                    check(hasDependency("testImplementation", "spring-boot-starter-security-test"))
+                }
+            }
+            """.trimIndent(),
+        )
+
+        val result = runGradle("verifyLateCompanionEnable")
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":verifyLateCompanionEnable")?.outcome)
+    }
+
+    @Test
+    fun `writes dependency report file with feature mappings`() {
+        writeBuildFile(
+            """
+            plugins {
+                id("io.github.architpanigrahi.springbootdsl")
+            }
+
+            repositories {
+                mavenCentral()
+            }
+
+            springBootPlugin {
+                web {
+                    mvc()
+                    webClient()
+                }
+                auth {
+                    security()
+                    jwt()
+                }
+                test {
+                    includeCompanionTests()
+                }
+            }
+            """.trimIndent(),
+        )
+
+        runGradle("help")
+
+        val reportFile = projectDir.resolve("springbootdsl-dependencies.txt")
+        assertTrue(reportFile.exists(), "Expected springbootdsl-dependencies.txt to be created")
+
+        val report = reportFile.readText()
+        assertTrue(report.contains("web { mvc() }"))
+        assertTrue(report.contains("web { webClient() }"))
+        assertTrue(report.contains("auth { security() }"))
+        assertTrue(report.contains("auth { jwt() }"))
+        assertTrue(report.contains("implementation: org.springframework.boot:spring-boot-starter-webmvc"))
+        assertTrue(report.contains("implementation: org.springframework.boot:spring-boot-starter-webflux"))
+        assertTrue(report.contains("testImplementation: org.springframework.boot:spring-boot-starter-webflux-test"))
     }
 
     private fun writeBuildFile(contents: String) {

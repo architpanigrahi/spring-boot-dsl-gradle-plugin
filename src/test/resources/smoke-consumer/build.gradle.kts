@@ -32,6 +32,7 @@ springBootPlugin {
         lombok()
     }
     test {
+        includeCompanionTests()
         springBootTest()
     }
 }

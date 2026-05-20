@@ -25,6 +25,11 @@ class SpringBootPlugin : Plugin<Project> {
             "springBootPlugin",
             SpringBootPluginExtension::class.java,
             featureRegistry,
+            dependencyConfigurer::enableCompanionTestsFor,
         )
+
+        project.afterEvaluate {
+            dependencyConfigurer.emitDependencyReport()
+        }
     }
 }

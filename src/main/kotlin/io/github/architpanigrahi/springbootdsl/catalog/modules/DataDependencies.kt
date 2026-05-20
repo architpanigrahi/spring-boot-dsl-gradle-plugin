@@ -2,6 +2,7 @@ package io.github.architpanigrahi.springbootdsl.catalog.modules
 
 import io.github.architpanigrahi.springbootdsl.dependency.DependencyConfiguration.IMPLEMENTATION
 import io.github.architpanigrahi.springbootdsl.dependency.DependencyConfiguration.RUNTIME_ONLY
+import io.github.architpanigrahi.springbootdsl.dependency.DependencyConfiguration.TEST_IMPLEMENTATION
 import io.github.architpanigrahi.springbootdsl.dependency.DependencyDeclaration
 import io.github.architpanigrahi.springbootdsl.feature.SpringFeature
 
@@ -51,6 +52,31 @@ internal val dataDependencies: Map<SpringFeature, List<DependencyDeclaration>> =
                 DependencyDeclaration(
                     configuration = IMPLEMENTATION,
                     notation = "org.springframework.boot:spring-boot-starter-data-mongodb",
+                ),
+            ),
+    )
+
+internal val dataTestCompanionDependencies: Map<SpringFeature, List<DependencyDeclaration>> =
+    mapOf(
+        SpringFeature.DATA_JPA to
+            listOf(
+                DependencyDeclaration(
+                    configuration = TEST_IMPLEMENTATION,
+                    notation = "org.springframework.boot:spring-boot-starter-data-jpa-test",
+                ),
+            ),
+        SpringFeature.DATA_REDIS to
+            listOf(
+                DependencyDeclaration(
+                    configuration = TEST_IMPLEMENTATION,
+                    notation = "org.springframework.boot:spring-boot-starter-data-redis-test",
+                ),
+            ),
+        SpringFeature.DATA_MONGODB to
+            listOf(
+                DependencyDeclaration(
+                    configuration = TEST_IMPLEMENTATION,
+                    notation = "org.springframework.boot:spring-boot-starter-data-mongodb-test",
                 ),
             ),
     )

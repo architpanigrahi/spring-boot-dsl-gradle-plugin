@@ -12,19 +12,11 @@ class SecuritySpec(
         featureRegistry.select(SPRING_SECURITY)
     }
 
-    fun springSecurity() {
-        security()
-    }
-
     fun jwt() {
         featureRegistry.select(SECURITY_OAUTH2_RESOURCE_SERVER)
     }
 
     fun oauth2Client() {
         featureRegistry.select(SECURITY_OAUTH2_CLIENT)
-    }
-
-    fun oauth2Login() {
-        oauth2Client()
     }
 }
