@@ -64,15 +64,19 @@ class SpringBootPluginFunctionalTest {
 
             springBootPlugin {
                 web {
-                    webMvc()
+                    mvc()
+                    restClient()
+                    webClient()
                 }
-                operations {
+                ops {
                     actuator()
                 }
-                security {
-                    springSecurity()
+                auth {
+                    security()
+                    jwt()
+                    oauth2Client()
                 }
-                databaseMigrations {
+                migrations {
                     flyway()
                 }
                 data {
@@ -80,12 +84,12 @@ class SpringBootPluginFunctionalTest {
                         h2()
                     }
                     redis()
-                    mongodb()
+                    mongo()
                 }
-                developerTools {
+                devTools {
                     lombok()
                 }
-                testing {
+                test {
                     springBootTest()
                 }
             }
@@ -98,8 +102,11 @@ class SpringBootPluginFunctionalTest {
                         }
 
                     check(hasDependency("implementation", "spring-boot-starter-webmvc"))
+                    check(hasDependency("implementation", "spring-boot-starter-webflux"))
                     check(hasDependency("implementation", "spring-boot-starter-actuator"))
                     check(hasDependency("implementation", "spring-boot-starter-security"))
+                    check(hasDependency("implementation", "spring-boot-starter-oauth2-resource-server"))
+                    check(hasDependency("implementation", "spring-boot-starter-oauth2-client"))
                     check(hasDependency("implementation", "flyway-core"))
                     check(hasDependency("implementation", "spring-boot-starter-data-jpa"))
                     check(hasDependency("implementation", "spring-boot-starter-data-redis"))
@@ -162,8 +169,8 @@ class SpringBootPluginFunctionalTest {
 
             springBootPlugin {
                 web {
-                    webMvc()
-                    webFlux()
+                    mvc()
+                    reactiveServer()
                 }
             }
             """.trimIndent(),
@@ -172,7 +179,7 @@ class SpringBootPluginFunctionalTest {
         val result = runGradleAndFail("help")
 
         assertTrue(
-            result.output.contains("webMvc() and webFlux() cannot be selected together."),
+            result.output.contains("mvc() and reactiveServer() cannot be selected together."),
             "Expected mutually exclusive web stack validation error",
         )
     }
@@ -233,6 +240,44 @@ class SpringBootPluginFunctionalTest {
             result.output.contains("flyway() and liquibase() cannot be selected together."),
             "Expected mutually exclusive migration engine validation error",
         )
+    }
+
+    @Test
+    fun `allows both rest and reactive clients`() {
+        writeBuildFile(
+            """
+            plugins {
+                id("io.github.architpanigrahi.springbootdsl")
+            }
+
+            repositories {
+                mavenCentral()
+            }
+
+            springBootPlugin {
+                web {
+                    restClient()
+                    webClient()
+                }
+            }
+            
+            tasks.register("verifyClientDependencies") {
+                doLast {
+                    fun hasDependency(configurationName: String, dependencyName: String): Boolean =
+                        configurations.getByName(configurationName).dependencies.any { dependency ->
+                            dependency.name == dependencyName
+                        }
+
+                    check(hasDependency("implementation", "spring-boot-starter-webmvc"))
+                    check(hasDependency("implementation", "spring-boot-starter-webflux"))
+                }
+            }
+            """.trimIndent(),
+        )
+
+        val result = runGradle("verifyClientDependencies")
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":verifyClientDependencies")?.outcome)
     }
 
     private fun writeBuildFile(contents: String) {

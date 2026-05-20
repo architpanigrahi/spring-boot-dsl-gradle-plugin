@@ -13,4 +13,18 @@ internal val securityDependencies: Map<SpringFeature, List<DependencyDeclaration
                     notation = "org.springframework.boot:spring-boot-starter-security",
                 ),
             ),
+        SpringFeature.SECURITY_OAUTH2_CLIENT to
+            listOf(
+                DependencyDeclaration(
+                    configuration = IMPLEMENTATION,
+                    notation = "org.springframework.boot:spring-boot-starter-oauth2-client",
+                ),
+            ),
+        SpringFeature.SECURITY_OAUTH2_RESOURCE_SERVER to
+            listOf(
+                DependencyDeclaration(
+                    configuration = IMPLEMENTATION,
+                    notation = "org.springframework.boot:spring-boot-starter-oauth2-resource-server",
+                ),
+            ),
     )

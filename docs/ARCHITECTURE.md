@@ -17,10 +17,10 @@
 
 ## Feature Domains
 
-- `web`: MVC or WebFlux
+- `web`: MVC or WebFlux plus HTTP client selection
 - `data`: JPA + JDBC drivers, Redis, MongoDB
 - `operations`: Actuator
-- `security`: Spring Security
+- `auth`: Spring Security, JWT resource server, OAuth2 client
 - `migrations`: Flyway or Liquibase
 - `tooling`: Lombok
 - `testing`: Spring Boot test starter
@@ -29,7 +29,7 @@
 
 Validation runs each time a feature is selected.
 
-- `WebStackCombinationExclusiveRule`: prevents `webMvc()` + `webFlux()`
+- `WebStackCombinationExclusiveRule`: prevents `mvc()` + `reactiveServer()`
 - `MigrationEngineExclusiveRule`: prevents `flyway()` + `liquibase()`
 
 Rules must be deterministic, explicit, and throw `GradleException` with corrective guidance.

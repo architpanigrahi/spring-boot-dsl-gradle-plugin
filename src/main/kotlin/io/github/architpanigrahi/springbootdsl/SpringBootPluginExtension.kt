@@ -30,12 +30,24 @@ open class SpringBootPluginExtension(
         action.execute(TestingSpec(featureRegistry))
     }
 
+    fun test(action: Action<TestingSpec>) {
+        testing(action)
+    }
+
     fun operations(action: Action<OperationsSpec>) {
         action.execute(OperationsSpec(featureRegistry))
     }
 
+    fun ops(action: Action<OperationsSpec>) {
+        operations(action)
+    }
+
     fun security(action: Action<SecuritySpec>) {
         action.execute(SecuritySpec(featureRegistry))
+    }
+
+    fun auth(action: Action<SecuritySpec>) {
+        security(action)
     }
 
     fun databaseMigrations(action: Action<MigrationsSpec>) {
@@ -50,5 +62,13 @@ open class SpringBootPluginExtension(
                 )
 
         featureRegistry.select(selectedEngine.feature)
+    }
+
+    fun migrations(action: Action<MigrationsSpec>) {
+        databaseMigrations(action)
+    }
+
+    fun devTools(action: Action<DeveloperToolsSpec>) {
+        developerTools(action)
     }
 }

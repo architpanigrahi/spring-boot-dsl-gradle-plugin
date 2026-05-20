@@ -34,18 +34,22 @@ repositories {
 
 springBootPlugin {
     web {
-        webMvc()
+        mvc()
+        restClient()
+        webClient()
     }
 
-    operations {
+    ops {
         actuator()
     }
 
-    security {
-        springSecurity()
+    auth {
+        security()
+        jwt()
+        oauth2Client()
     }
 
-    databaseMigrations {
+    migrations {
         flyway()
     }
 
@@ -54,14 +58,14 @@ springBootPlugin {
             h2()
         }
         redis()
-        mongodb()
+        mongo()
     }
 
-    developerTools {
+    devTools {
         lombok()
     }
 
-    testing {
+    test {
         springBootTest()
     }
 }
@@ -79,10 +83,18 @@ The plugin internally applies:
 
 ```kotlin
 web {
-    webMvc()
-    webFlux()
+    mvc()
+    // or reactiveServer()
+
+    restClient()
+    webClient()
 }
 ```
+
+- `mvc()` selects Spring MVC server starter.
+- `reactiveServer()` selects WebFlux server starter.
+- `restClient()` adds the blocking HTTP client stack.
+- `webClient()` adds the reactive HTTP client stack.
 
 ### Data
 
@@ -92,7 +104,7 @@ data {
         postgres()
     }
     redis()
-    mongodb()
+    mongo()
 }
 ```
 
@@ -105,12 +117,12 @@ Supported JPA database drivers:
 Additional data modules:
 
 - `redis()`
-- `mongodb()`
+- `mongo()`
 
 ### Developer Tools
 
 ```kotlin
-developerTools {
+devTools {
     lombok()
 }
 ```
@@ -118,23 +130,33 @@ developerTools {
 ### Operations
 
 ```kotlin
-operations {
+ops {
     actuator()
 }
 ```
 
-### Security
+### Auth
 
 ```kotlin
-security {
-    springSecurity()
+auth {
+    security()
+    jwt()
+    oauth2Client()
 }
 ```
+
+- `security()` adds `spring-boot-starter-security`.
+- `jwt()` adds `spring-boot-starter-oauth2-resource-server`.
+- `oauth2Client()` adds `spring-boot-starter-oauth2-client`.
+- `oauth2Login()` is an alias for `oauth2Client()`.
+
+Compatibility alias block:
+- `security { ... }` still works and maps to `auth { ... }`.
 
 ### Database Migrations
 
 ```kotlin
-databaseMigrations {
+migrations {
     flyway()
 }
 ```
@@ -147,55 +169,27 @@ Supported migration engines:
 ### Testing
 
 ```kotlin
-testing {
+test {
     springBootTest()
 }
 ```
 
-## Example
+## Block Naming
 
-```kotlin
-springBootPlugin {
-    web {
-        webMvc()
-    }
-
-    operations {
-        actuator()
-    }
-
-    security {
-        springSecurity()
-    }
-
-    databaseMigrations {
-        flyway()
-    }
-
-    data {
-        jpa {
-            postgres()
-        }
-        redis()
-    }
-
-    developerTools {
-        lombok()
-    }
-
-    testing {
-        springBootTest()
-    }
-}
-```
-
-This configures a Spring Boot MVC application with Actuator, Security, JPA + PostgreSQL, Redis, Flyway, Lombok, and the Spring Boot test starter.
+- `web`, `data`, `auth`, `ops`, `migrations`, `devTools`, and `test` are the preferred block names.
+- Legacy aliases are kept for backward compatibility:
+  - `security { ... }` -> `auth { ... }`
+  - `operations { ... }` -> `ops { ... }`
+  - `databaseMigrations { ... }` -> `migrations { ... }`
+  - `developerTools { ... }` -> `devTools { ... }`
+  - `testing { ... }` -> `test { ... }`
 
 ## Validation Behavior
 
 - `data { jpa { ... } }` requires exactly one driver (`postgres()`, `mysql()`, or `h2()`).
-- `webMvc()` and `webFlux()` are mutually exclusive and fail the build if selected together.
-- `databaseMigrations { ... }` requires exactly one engine (`flyway()` or `liquibase()`).
+- `mvc()` and `reactiveServer()` are mutually exclusive server options.
+- `restClient()` and `webClient()` can be selected together.
+- `migrations { ... }` requires exactly one engine (`flyway()` or `liquibase()`).
 - `flyway()` and `liquibase()` are mutually exclusive and fail the build if selected together.
 
 ## Contributor Workflow
@@ -208,13 +202,6 @@ This configures a Spring Boot MVC application with Actuator, Security, JPA + Pos
 The plugin follows semantic versioning.
 
 - `0.1.0` — Initial public release
-
-## Roadmap
-
-Planned additions include:
-
-- Testcontainers
-- broader Spring Initializr-style coverage
 
 ## Local Development
 

@@ -37,4 +37,8 @@ class DataSpec(
     fun mongodb() {
         featureRegistry.select(DATA_MONGODB)
     }
+
+    fun mongo() {
+        mongodb()
+    }
 }

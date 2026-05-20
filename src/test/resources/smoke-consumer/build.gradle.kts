@@ -8,15 +8,17 @@ repositories {
 
 springBootPlugin {
     web {
-        webMvc()
+        mvc()
     }
-    operations {
+    ops {
         actuator()
     }
-    security {
-        springSecurity()
+    auth {
+        security()
+        jwt()
+        oauth2Client()
     }
-    databaseMigrations {
+    migrations {
         flyway()
     }
     data {
@@ -24,12 +26,12 @@ springBootPlugin {
             h2()
         }
         redis()
-        mongodb()
+        mongo()
     }
-    developerTools {
+    devTools {
         lombok()
     }
-    testing {
+    test {
         springBootTest()
     }
 }

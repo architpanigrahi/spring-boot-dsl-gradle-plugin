@@ -1,5 +1,6 @@
 package io.github.architpanigrahi.springbootdsl.catalog
 
+import io.github.architpanigrahi.springbootdsl.catalog.modules.clientDependencies
 import io.github.architpanigrahi.springbootdsl.catalog.modules.dataDependencies
 import io.github.architpanigrahi.springbootdsl.catalog.modules.migrationDependencies
 import io.github.architpanigrahi.springbootdsl.catalog.modules.operationsDependencies
@@ -14,6 +15,7 @@ object DependencyCatalog {
     private val dependencies: Map<SpringFeature, List<DependencyDeclaration>> =
         buildMap {
             putAll(webDependencies)
+            putAll(clientDependencies)
             putAll(dataDependencies)
             putAll(toolingDependencies)
             putAll(operationsDependencies)

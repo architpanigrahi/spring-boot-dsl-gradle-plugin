@@ -20,7 +20,7 @@ object WebStackCombinationExclusiveRule : FeatureValidationRule {
 
         if (webFeatureWasJustAdded && bothWebStacksSelected) {
             throw GradleException(
-                "webMvc() and webFlux() cannot be selected together. " +
+                "mvc() and reactiveServer() cannot be selected together. " +
                     "Choose exactly one web stack.",
             )
         }
