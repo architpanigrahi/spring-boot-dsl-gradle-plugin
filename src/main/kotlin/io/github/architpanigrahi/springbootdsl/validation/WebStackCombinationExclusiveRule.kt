@@ -3,9 +3,10 @@ package io.github.architpanigrahi.springbootdsl.validation
 import io.github.architpanigrahi.springbootdsl.feature.SpringFeature
 import io.github.architpanigrahi.springbootdsl.feature.SpringFeature.WEB_FLUX
 import io.github.architpanigrahi.springbootdsl.feature.SpringFeature.WEB_MVC
+import org.gradle.api.GradleException
 import org.gradle.api.logging.Logger
 
-object WebStackCombinationRule : FeatureValidationRule {
+object WebStackCombinationExclusiveRule : FeatureValidationRule {
 
     override fun validate(
         newlySelectedFeature: SpringFeature,
@@ -19,9 +20,9 @@ object WebStackCombinationRule : FeatureValidationRule {
             WEB_MVC in selectedFeatures && WEB_FLUX in selectedFeatures
 
         if (webFeatureWasJustAdded && bothWebStacksSelected) {
-            logger.warn(
-                "Both webMvc() and webFlux() were selected. " +
-                        "This may be intentional, but it is worth verifying."
+            throw GradleException(
+                "webMvc() and webFlux() cannot be selected together. " +
+                        "Choose exactly one web stack."
             )
         }
     }

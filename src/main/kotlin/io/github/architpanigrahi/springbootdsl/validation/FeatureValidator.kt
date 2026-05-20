@@ -7,7 +7,7 @@ class FeatureValidator(
     private val logger: Logger,
     private val rules: List<FeatureValidationRule> =
         listOf(
-            WebStackCombinationRule
+            WebStackCombinationExclusiveRule
         )
 ) {
     fun validate(

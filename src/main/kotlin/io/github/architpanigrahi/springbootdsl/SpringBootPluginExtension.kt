@@ -2,6 +2,8 @@ package io.github.architpanigrahi.springbootdsl
 
 import io.github.architpanigrahi.springbootdsl.dsl.DataSpec
 import io.github.architpanigrahi.springbootdsl.dsl.DeveloperToolsSpec
+import io.github.architpanigrahi.springbootdsl.dsl.OperationsSpec
+import io.github.architpanigrahi.springbootdsl.dsl.SecuritySpec
 import io.github.architpanigrahi.springbootdsl.dsl.TestingSpec
 import io.github.architpanigrahi.springbootdsl.dsl.WebSpec
 import io.github.architpanigrahi.springbootdsl.feature.FeatureRegistry
@@ -24,5 +26,13 @@ open class SpringBootPluginExtension(
 
     fun testing(action: Action<TestingSpec>) {
         action.execute(TestingSpec(featureRegistry))
+    }
+
+    fun operations(action: Action<OperationsSpec>) {
+        action.execute(OperationsSpec(featureRegistry))
+    }
+
+    fun security(action: Action<SecuritySpec>) {
+        action.execute(SecuritySpec(featureRegistry))
     }
 }

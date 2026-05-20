@@ -4,6 +4,16 @@ A concise, typed Gradle DSL for configuring common **Spring Boot 4+** applicatio
 
 Instead of repeating standard Spring Boot plugin and dependency declarations across projects, define the capabilities your application needs in a cleaner, developer-friendly format.
 
+## Compatibility
+
+| Component | Supported |
+| --- | --- |
+| Plugin version | `0.1.0` |
+| Gradle | `9.2.1+` |
+| Java toolchain | `21` |
+| Spring Boot line | `4.0.x` |
+| Kotlin DSL | Gradle-embedded Kotlin (`2.2.x` on Gradle 9.2.1) |
+
 ## Usage
 
 ```kotlin
@@ -18,6 +28,14 @@ repositories {
 springBootPlugin {
     web {
         webMvc()
+    }
+
+    operations {
+        actuator()
+    }
+
+    security {
+        springSecurity()
     }
 
     data {
@@ -77,6 +95,22 @@ developerTools {
 }
 ```
 
+### Operations
+
+```kotlin
+operations {
+    actuator()
+}
+```
+
+### Security
+
+```kotlin
+security {
+    springSecurity()
+}
+```
+
 ### Testing
 
 ```kotlin
@@ -110,6 +144,11 @@ springBootPlugin {
 ```
 
 This configures a Spring Boot MVC application with JPA, PostgreSQL, Lombok, and the standard Spring Boot test starter.
+
+## Validation Behavior
+
+- `data { jpa { ... } }` requires exactly one driver (`postgres()`, `mysql()`, or `h2()`).
+- `webMvc()` and `webFlux()` are mutually exclusive and now fail the build if selected together.
 
 ## Releases
 

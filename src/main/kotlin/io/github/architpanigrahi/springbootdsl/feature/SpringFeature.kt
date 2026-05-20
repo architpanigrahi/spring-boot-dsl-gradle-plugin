@@ -10,6 +10,8 @@ enum class SpringFeature {
     H2_DATABASE,
 
     LOMBOK,
+    SPRING_BOOT_ACTUATOR,
+    SPRING_SECURITY,
 
     SPRING_BOOT_TEST
 }

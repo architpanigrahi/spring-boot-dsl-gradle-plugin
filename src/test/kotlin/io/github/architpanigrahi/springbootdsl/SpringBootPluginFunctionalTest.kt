@@ -67,6 +67,12 @@ class SpringBootPluginFunctionalTest {
                 web {
                     webMvc()
                 }
+                operations {
+                    actuator()
+                }
+                security {
+                    springSecurity()
+                }
                 data {
                     jpa {
                         h2()
@@ -88,6 +94,8 @@ class SpringBootPluginFunctionalTest {
                         }
 
                     check(hasDependency("implementation", "spring-boot-starter-webmvc"))
+                    check(hasDependency("implementation", "spring-boot-starter-actuator"))
+                    check(hasDependency("implementation", "spring-boot-starter-security"))
                     check(hasDependency("implementation", "spring-boot-starter-data-jpa"))
                     check(hasDependency("runtimeOnly", "h2"))
                     check(hasDependency("runtimeOnly", "spring-boot-h2console"))
@@ -130,6 +138,35 @@ class SpringBootPluginFunctionalTest {
         assertTrue(
             result.output.contains("data { jpa { ... } } requires a database driver."),
             "Expected JPA configuration error in build output"
+        )
+    }
+
+    @Test
+    fun `fails when both mvc and webflux are selected`() {
+        writeBuildFile(
+            """
+            plugins {
+                id("io.github.architpanigrahi.springbootdsl")
+            }
+
+            repositories {
+                mavenCentral()
+            }
+
+            springBootPlugin {
+                web {
+                    webMvc()
+                    webFlux()
+                }
+            }
+            """.trimIndent()
+        )
+
+        val result = runGradleAndFail("help")
+
+        assertTrue(
+            result.output.contains("webMvc() and webFlux() cannot be selected together."),
+            "Expected mutually exclusive web stack validation error"
         )
     }
 
