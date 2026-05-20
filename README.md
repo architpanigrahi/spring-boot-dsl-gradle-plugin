@@ -15,7 +15,7 @@ repositories {
     mavenCentral()
 }
 
-springPlugin {
+springBootPlugin {
     web {
         webMvc()
     }
@@ -88,7 +88,7 @@ testing {
 ## Example
 
 ```kotlin
-springPlugin {
+springBootPlugin {
     web {
         webMvc()
     }
