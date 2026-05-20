@@ -227,6 +227,18 @@ Run:
 
 This task is in the Gradle **Help** group and prints a full `springBootPlugin { ... }` template with all available options.
 
+For in-depth help for one block:
+
+```bash
+./gradlew springBootDslOptions --block=web
+./gradlew springBootDslOptions --block=data
+./gradlew springBootDslOptions --block=auth
+./gradlew springBootDslOptions --block=ops
+./gradlew springBootDslOptions --block=migrations
+./gradlew springBootDslOptions --block=devTools
+./gradlew springBootDslOptions --block=test
+```
+
 ## Contributor Workflow
 
 - Follow `CONTRIBUTING.md` for mandatory feature implementation and validation rules.

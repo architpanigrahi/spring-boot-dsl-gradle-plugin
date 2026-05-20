@@ -73,6 +73,52 @@ class SpringBootPluginFunctionalTest {
         assertTrue(result.output.contains("web {"))
         assertTrue(result.output.contains("auth {"))
         assertTrue(result.output.contains("includeCompanionTests()"))
+        assertTrue(result.output.contains("reactiveServer()"))
+        assertTrue(result.output.contains("Use: ./gradlew springBootDslOptions --block=<name>"))
+        assertTrue(!result.output.contains("Choose one server stack"))
+    }
+
+    @Test
+    fun `prints in-depth block help for web`() {
+        writeBuildFile(
+            """
+            plugins {
+                id("io.github.architpanigrahi.springbootdsl")
+            }
+
+            repositories {
+                mavenCentral()
+            }
+            """.trimIndent(),
+        )
+
+        val result = runGradle("springBootDslOptions", "--block=web")
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":springBootDslOptions")?.outcome)
+        assertTrue(result.output.contains("Block: web"))
+        assertTrue(result.output.contains("mvc() and reactiveServer() are mutually exclusive."))
+        assertTrue(result.output.contains("restClient() and webClient() can be used together."))
+    }
+
+    @Test
+    fun `prints unknown block guidance`() {
+        writeBuildFile(
+            """
+            plugins {
+                id("io.github.architpanigrahi.springbootdsl")
+            }
+
+            repositories {
+                mavenCentral()
+            }
+            """.trimIndent(),
+        )
+
+        val result = runGradle("springBootDslOptions", "--block=unknown")
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":springBootDslOptions")?.outcome)
+        assertTrue(result.output.contains("Unknown block: unknown"))
+        assertTrue(result.output.contains("Valid blocks: web, data, auth, ops, migrations, devTools, test"))
     }
 
     @Test

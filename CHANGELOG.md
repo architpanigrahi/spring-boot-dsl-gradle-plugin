@@ -4,7 +4,8 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
-- Added helper task `springBootDslOptions` (group: `Help`) to print a full DSL template with all available options.
+- Enhanced helper task `springBootDslOptions` (group: `Help`) to print an uncommented full DSL template with all options.
+- Added `springBootDslOptions --block=<name>` for in-depth, block-specific help (`web`, `data`, `auth`, `ops`, `migrations`, `devTools`, `test`).
 - Expanded functional tests for new success/failure/reporting/help-task paths.
 
 ## [0.1.1] - 2026-05-20
