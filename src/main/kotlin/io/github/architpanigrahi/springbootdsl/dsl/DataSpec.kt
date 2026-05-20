@@ -2,11 +2,13 @@ package io.github.architpanigrahi.springbootdsl.dsl
 
 import io.github.architpanigrahi.springbootdsl.feature.FeatureRegistry
 import io.github.architpanigrahi.springbootdsl.feature.SpringFeature.DATA_JPA
+import io.github.architpanigrahi.springbootdsl.feature.SpringFeature.DATA_MONGODB
+import io.github.architpanigrahi.springbootdsl.feature.SpringFeature.DATA_REDIS
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 
 class DataSpec(
-    private val featureRegistry: FeatureRegistry
+    private val featureRegistry: FeatureRegistry,
 ) {
     /**
      * Adds Spring Data JPA and requires exactly one JDBC database driver.
@@ -19,12 +21,20 @@ class DataSpec(
             jpaSpec.selectedDatabase
                 ?: throw GradleException(
                     "data { jpa { ... } } requires a database driver. " +
-                            "For example: jpa { postgres() }"
+                        "For example: jpa { postgres() }",
                 )
 
         featureRegistry.selectAll(
             DATA_JPA,
-            selectedDatabase.feature
+            selectedDatabase.feature,
         )
+    }
+
+    fun redis() {
+        featureRegistry.select(DATA_REDIS)
+    }
+
+    fun mongodb() {
+        featureRegistry.select(DATA_MONGODB)
     }
 }

@@ -7,20 +7,20 @@ import io.github.architpanigrahi.springbootdsl.feature.SpringFeature.POSTGRES_JD
 
 enum class JpaDatabase(
     val feature: SpringFeature,
-    val displayName: String
+    val displayName: String,
 ) {
     POSTGRES(
         feature = POSTGRES_JDBC,
-        displayName = "PostgreSQL"
+        displayName = "PostgreSQL",
     ),
 
     MYSQL(
         feature = MYSQL_JDBC,
-        displayName = "MySQL"
+        displayName = "MySQL",
     ),
 
     H2(
         feature = H2_DATABASE,
-        displayName = "H2"
-    )
+        displayName = "H2",
+    ),
 }

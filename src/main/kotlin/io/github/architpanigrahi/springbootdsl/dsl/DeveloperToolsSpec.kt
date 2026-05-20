@@ -4,7 +4,7 @@ import io.github.architpanigrahi.springbootdsl.feature.FeatureRegistry
 import io.github.architpanigrahi.springbootdsl.feature.SpringFeature.LOMBOK
 
 class DeveloperToolsSpec(
-    private val featureRegistry: FeatureRegistry
+    private val featureRegistry: FeatureRegistry,
 ) {
     /**
      * Adds Lombok as a compile-only dependency and annotation processor.

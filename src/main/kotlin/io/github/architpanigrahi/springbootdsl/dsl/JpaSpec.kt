@@ -3,7 +3,6 @@ package io.github.architpanigrahi.springbootdsl.dsl
 import org.gradle.api.GradleException
 
 class JpaSpec {
-
     internal var selectedDatabase: JpaDatabase? = null
         private set
 
@@ -34,8 +33,8 @@ class JpaSpec {
         if (existingDatabase != null && existingDatabase != database) {
             throw GradleException(
                 "Only one JPA database driver can be selected. " +
-                        "Already selected: ${existingDatabase.displayName}. " +
-                        "Attempted: ${database.displayName}."
+                    "Already selected: ${existingDatabase.displayName}. " +
+                    "Attempted: ${database.displayName}.",
             )
         }
 

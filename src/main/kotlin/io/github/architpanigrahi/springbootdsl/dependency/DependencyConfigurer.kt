@@ -5,7 +5,7 @@ import io.github.architpanigrahi.springbootdsl.feature.SpringFeature
 import org.gradle.api.Project
 
 class DependencyConfigurer(
-    private val project: Project
+    private val project: Project,
 ) {
     fun configure(feature: SpringFeature) {
         DependencyCatalog
@@ -13,7 +13,7 @@ class DependencyConfigurer(
             .forEach { dependency ->
                 project.dependencies.add(
                     dependency.configuration.gradleName,
-                    dependency.notation
+                    dependency.notation,
                 )
             }
     }

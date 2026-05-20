@@ -11,7 +11,6 @@ import kotlin.io.path.createDirectories
 import kotlin.io.path.writeText
 
 class SpringBootPluginFunctionalTest {
-
     @TempDir
     lateinit var projectDir: Path
 
@@ -43,7 +42,7 @@ class SpringBootPluginFunctionalTest {
                     }
                 }
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         val result = runGradle("verifyPluginSetup")
@@ -73,10 +72,15 @@ class SpringBootPluginFunctionalTest {
                 security {
                     springSecurity()
                 }
+                databaseMigrations {
+                    flyway()
+                }
                 data {
                     jpa {
                         h2()
                     }
+                    redis()
+                    mongodb()
                 }
                 developerTools {
                     lombok()
@@ -96,7 +100,10 @@ class SpringBootPluginFunctionalTest {
                     check(hasDependency("implementation", "spring-boot-starter-webmvc"))
                     check(hasDependency("implementation", "spring-boot-starter-actuator"))
                     check(hasDependency("implementation", "spring-boot-starter-security"))
+                    check(hasDependency("implementation", "flyway-core"))
                     check(hasDependency("implementation", "spring-boot-starter-data-jpa"))
+                    check(hasDependency("implementation", "spring-boot-starter-data-redis"))
+                    check(hasDependency("implementation", "spring-boot-starter-data-mongodb"))
                     check(hasDependency("runtimeOnly", "h2"))
                     check(hasDependency("runtimeOnly", "spring-boot-h2console"))
                     check(hasDependency("compileOnly", "lombok"))
@@ -104,7 +111,7 @@ class SpringBootPluginFunctionalTest {
                     check(hasDependency("testImplementation", "spring-boot-starter-test"))
                 }
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         val result = runGradle("verifyDependencies")
@@ -130,14 +137,14 @@ class SpringBootPluginFunctionalTest {
                     }
                 }
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         val result = runGradleAndFail("help")
 
         assertTrue(
             result.output.contains("data { jpa { ... } } requires a database driver."),
-            "Expected JPA configuration error in build output"
+            "Expected JPA configuration error in build output",
         )
     }
 
@@ -159,14 +166,72 @@ class SpringBootPluginFunctionalTest {
                     webFlux()
                 }
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         val result = runGradleAndFail("help")
 
         assertTrue(
             result.output.contains("webMvc() and webFlux() cannot be selected together."),
-            "Expected mutually exclusive web stack validation error"
+            "Expected mutually exclusive web stack validation error",
+        )
+    }
+
+    @Test
+    fun `fails when migrations block has no engine`() {
+        writeBuildFile(
+            """
+            plugins {
+                id("io.github.architpanigrahi.springbootdsl")
+            }
+
+            repositories {
+                mavenCentral()
+            }
+
+            springBootPlugin {
+                databaseMigrations {
+                }
+            }
+            """.trimIndent(),
+        )
+
+        val result = runGradleAndFail("help")
+
+        assertTrue(
+            result.output.contains("databaseMigrations { ... } requires an engine."),
+            "Expected migration engine requirement error",
+        )
+    }
+
+    @Test
+    fun `fails when both flyway and liquibase are selected`() {
+        writeBuildFile(
+            """
+            plugins {
+                id("io.github.architpanigrahi.springbootdsl")
+            }
+
+            repositories {
+                mavenCentral()
+            }
+
+            springBootPlugin {
+                databaseMigrations {
+                    flyway()
+                }
+                databaseMigrations {
+                    liquibase()
+                }
+            }
+            """.trimIndent(),
+        )
+
+        val result = runGradleAndFail("help")
+
+        assertTrue(
+            result.output.contains("flyway() and liquibase() cannot be selected together."),
+            "Expected mutually exclusive migration engine validation error",
         )
     }
 

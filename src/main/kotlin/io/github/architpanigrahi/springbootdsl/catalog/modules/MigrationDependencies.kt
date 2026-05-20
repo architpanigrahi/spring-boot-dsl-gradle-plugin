@@ -4,20 +4,20 @@ import io.github.architpanigrahi.springbootdsl.dependency.DependencyConfiguratio
 import io.github.architpanigrahi.springbootdsl.dependency.DependencyDeclaration
 import io.github.architpanigrahi.springbootdsl.feature.SpringFeature
 
-internal val webDependencies: Map<SpringFeature, List<DependencyDeclaration>> =
+internal val migrationDependencies: Map<SpringFeature, List<DependencyDeclaration>> =
     mapOf(
-        SpringFeature.WEB_MVC to
+        SpringFeature.FLYWAY_MIGRATION to
             listOf(
                 DependencyDeclaration(
                     configuration = IMPLEMENTATION,
-                    notation = "org.springframework.boot:spring-boot-starter-webmvc",
+                    notation = "org.flywaydb:flyway-core",
                 ),
             ),
-        SpringFeature.WEB_FLUX to
+        SpringFeature.LIQUIBASE_MIGRATION to
             listOf(
                 DependencyDeclaration(
                     configuration = IMPLEMENTATION,
-                    notation = "org.springframework.boot:spring-boot-starter-webflux",
+                    notation = "org.liquibase:liquibase-core",
                 ),
             ),
     )

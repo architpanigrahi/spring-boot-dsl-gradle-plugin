@@ -7,7 +7,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 class SpringBootPlugin : Plugin<Project> {
-
     override fun apply(project: Project) {
         project.pluginManager.apply("java")
         project.pluginManager.apply("org.springframework.boot")
@@ -16,15 +15,16 @@ class SpringBootPlugin : Plugin<Project> {
         val dependencyConfigurer = DependencyConfigurer(project)
         val featureValidator = FeatureValidator(project.logger)
 
-        val featureRegistry = FeatureRegistry(
-            onFeatureSelected = dependencyConfigurer::configure,
-            onFeaturesChanged = featureValidator::validate
-        )
+        val featureRegistry =
+            FeatureRegistry(
+                onFeatureSelected = dependencyConfigurer::configure,
+                onFeaturesChanged = featureValidator::validate,
+            )
 
         project.extensions.create(
             "springBootPlugin",
             SpringBootPluginExtension::class.java,
-            featureRegistry
+            featureRegistry,
         )
     }
 }

@@ -2,6 +2,7 @@ plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
     id("com.gradle.plugin-publish") version "2.0.0"
+    id("org.jlleitschuh.gradle.ktlint") version "12.3.0"
 }
 
 group = "io.github.architpanigrahi"
@@ -38,6 +39,10 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.check {
+    dependsOn("ktlintCheck")
+}
+
 gradlePlugin {
     website = "https://github.com/architpanigrahi/spring-boot-dsl-gradle-plugin"
     vcsUrl = "https://github.com/architpanigrahi/spring-boot-dsl-gradle-plugin"
@@ -54,8 +59,8 @@ gradlePlugin {
                     "spring-boot",
                     "gradle-plugin",
                     "convention-plugin",
-                    "kotlin-dsl"
-                )
+                    "kotlin-dsl",
+                ),
             )
         }
     }

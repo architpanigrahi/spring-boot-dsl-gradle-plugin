@@ -1,11 +1,11 @@
 package io.github.architpanigrahi.springbootdsl.dependency
 
 enum class DependencyConfiguration(
-    val gradleName: String
+    val gradleName: String,
 ) {
     IMPLEMENTATION("implementation"),
     RUNTIME_ONLY("runtimeOnly"),
     COMPILE_ONLY("compileOnly"),
     ANNOTATION_PROCESSOR("annotationProcessor"),
-    TEST_IMPLEMENTATION("testImplementation")
+    TEST_IMPLEMENTATION("testImplementation"),
 }

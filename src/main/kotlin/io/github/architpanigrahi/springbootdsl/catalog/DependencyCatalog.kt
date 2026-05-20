@@ -1,6 +1,7 @@
 package io.github.architpanigrahi.springbootdsl.catalog
 
 import io.github.architpanigrahi.springbootdsl.catalog.modules.dataDependencies
+import io.github.architpanigrahi.springbootdsl.catalog.modules.migrationDependencies
 import io.github.architpanigrahi.springbootdsl.catalog.modules.operationsDependencies
 import io.github.architpanigrahi.springbootdsl.catalog.modules.securityDependencies
 import io.github.architpanigrahi.springbootdsl.catalog.modules.testingDependencies
@@ -10,7 +11,6 @@ import io.github.architpanigrahi.springbootdsl.dependency.DependencyDeclaration
 import io.github.architpanigrahi.springbootdsl.feature.SpringFeature
 
 object DependencyCatalog {
-
     private val dependencies: Map<SpringFeature, List<DependencyDeclaration>> =
         buildMap {
             putAll(webDependencies)
@@ -18,6 +18,7 @@ object DependencyCatalog {
             putAll(toolingDependencies)
             putAll(operationsDependencies)
             putAll(securityDependencies)
+            putAll(migrationDependencies)
             putAll(testingDependencies)
         }
 

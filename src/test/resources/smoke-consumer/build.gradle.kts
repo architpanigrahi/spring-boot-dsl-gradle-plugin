@@ -16,10 +16,15 @@ springBootPlugin {
     security {
         springSecurity()
     }
+    databaseMigrations {
+        flyway()
+    }
     data {
         jpa {
             h2()
         }
+        redis()
+        mongodb()
     }
     developerTools {
         lombok()

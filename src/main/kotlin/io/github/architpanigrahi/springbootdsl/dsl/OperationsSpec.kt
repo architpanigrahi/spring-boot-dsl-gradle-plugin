@@ -4,7 +4,7 @@ import io.github.architpanigrahi.springbootdsl.feature.FeatureRegistry
 import io.github.architpanigrahi.springbootdsl.feature.SpringFeature.SPRING_BOOT_ACTUATOR
 
 class OperationsSpec(
-    private val featureRegistry: FeatureRegistry
+    private val featureRegistry: FeatureRegistry,
 ) {
     fun actuator() {
         featureRegistry.select(SPRING_BOOT_ACTUATOR)

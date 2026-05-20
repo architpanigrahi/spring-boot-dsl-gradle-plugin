@@ -7,6 +7,6 @@ fun interface FeatureValidationRule {
     fun validate(
         newlySelectedFeature: SpringFeature,
         selectedFeatures: Set<SpringFeature>,
-        logger: Logger
+        logger: Logger,
     )
 }

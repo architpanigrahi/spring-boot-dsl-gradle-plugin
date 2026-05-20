@@ -24,7 +24,7 @@ jobs:
           cache: gradle
 
       - name: Gradle Build
-        run: ./gradlew clean build --stacktrace
+        run: ./gradlew clean build ktlintCheck --stacktrace
 
       - name: Smoke Consumer (Composite Build)
         run: |

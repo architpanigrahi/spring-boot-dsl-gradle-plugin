@@ -7,11 +7,10 @@ import org.gradle.api.GradleException
 import org.gradle.api.logging.Logger
 
 object WebStackCombinationExclusiveRule : FeatureValidationRule {
-
     override fun validate(
         newlySelectedFeature: SpringFeature,
         selectedFeatures: Set<SpringFeature>,
-        logger: Logger
+        logger: Logger,
     ) {
         val webFeatureWasJustAdded =
             newlySelectedFeature == WEB_MVC || newlySelectedFeature == WEB_FLUX
@@ -22,7 +21,7 @@ object WebStackCombinationExclusiveRule : FeatureValidationRule {
         if (webFeatureWasJustAdded && bothWebStacksSelected) {
             throw GradleException(
                 "webMvc() and webFlux() cannot be selected together. " +
-                        "Choose exactly one web stack."
+                    "Choose exactly one web stack.",
             )
         }
     }

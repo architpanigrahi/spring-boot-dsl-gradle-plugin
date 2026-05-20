@@ -7,18 +7,19 @@ class FeatureValidator(
     private val logger: Logger,
     private val rules: List<FeatureValidationRule> =
         listOf(
-            WebStackCombinationExclusiveRule
-        )
+            WebStackCombinationExclusiveRule,
+            MigrationEngineExclusiveRule,
+        ),
 ) {
     fun validate(
         newlySelectedFeature: SpringFeature,
-        selectedFeatures: Set<SpringFeature>
+        selectedFeatures: Set<SpringFeature>,
     ) {
         rules.forEach { rule ->
             rule.validate(
                 newlySelectedFeature = newlySelectedFeature,
                 selectedFeatures = selectedFeatures,
-                logger = logger
+                logger = logger,
             )
         }
     }

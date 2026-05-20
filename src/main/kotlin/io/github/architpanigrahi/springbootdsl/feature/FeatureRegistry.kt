@@ -2,7 +2,7 @@ package io.github.architpanigrahi.springbootdsl.feature
 
 class FeatureRegistry(
     private val onFeatureSelected: (SpringFeature) -> Unit,
-    private val onFeaturesChanged: (SpringFeature, Set<SpringFeature>) -> Unit
+    private val onFeaturesChanged: (SpringFeature, Set<SpringFeature>) -> Unit,
 ) {
     private val selectedFeatures = linkedSetOf<SpringFeature>()
 

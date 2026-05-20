@@ -5,7 +5,7 @@ import io.github.architpanigrahi.springbootdsl.feature.SpringFeature.WEB_FLUX
 import io.github.architpanigrahi.springbootdsl.feature.SpringFeature.WEB_MVC
 
 class WebSpec(
-    private val featureRegistry: FeatureRegistry
+    private val featureRegistry: FeatureRegistry,
 ) {
     /**
      * Adds Spring Boot's Web MVC starter.

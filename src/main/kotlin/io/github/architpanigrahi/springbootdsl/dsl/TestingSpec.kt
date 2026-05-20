@@ -4,7 +4,7 @@ import io.github.architpanigrahi.springbootdsl.feature.FeatureRegistry
 import io.github.architpanigrahi.springbootdsl.feature.SpringFeature.SPRING_BOOT_TEST
 
 class TestingSpec(
-    private val featureRegistry: FeatureRegistry
+    private val featureRegistry: FeatureRegistry,
 ) {
     /**
      * Adds Spring Boot's default test starter.
