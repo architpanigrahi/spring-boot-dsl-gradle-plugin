@@ -2,6 +2,7 @@ package io.github.architpanigrahi.springbootdsl
 
 import io.github.architpanigrahi.springbootdsl.dependency.DependencyConfigurer
 import io.github.architpanigrahi.springbootdsl.feature.FeatureRegistry
+import io.github.architpanigrahi.springbootdsl.task.SpringBootDslOptionsTask
 import io.github.architpanigrahi.springbootdsl.validation.FeatureValidator
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -26,6 +27,11 @@ class SpringBootPlugin : Plugin<Project> {
             SpringBootPluginExtension::class.java,
             featureRegistry,
             dependencyConfigurer::enableCompanionTestsFor,
+        )
+
+        project.tasks.register(
+            "springBootDslOptions",
+            SpringBootDslOptionsTask::class.java,
         )
 
         project.afterEvaluate {

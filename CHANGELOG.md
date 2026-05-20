@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+## [Unreleased]
+
+- Added helper task `springBootDslOptions` (group: `Help`) to print a full DSL template with all available options.
+- Expanded functional tests for new success/failure/reporting/help-task paths.
+
 ## [0.1.1] - 2026-05-20
 
 - Added `data { redis() }` and `data { mongo() }`.
@@ -17,7 +22,6 @@ All notable changes to this project are documented in this file.
 - Modularized dependency catalog for migration and data module expansion.
 - Added governance docs: `CONTRIBUTING.md` and `docs/ARCHITECTURE.md`.
 - Added `ktlint` quality gate and staged CI pipeline.
-- Expanded functional tests for new success/failure/reporting paths.
 
 ## [0.1.0] - 2026-05-20
 

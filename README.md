@@ -217,6 +217,16 @@ This report includes:
 
 The plugin also prints the report path in the Gradle console.
 
+## Helper Task
+
+Run:
+
+```bash
+./gradlew springBootDslOptions
+```
+
+This task is in the Gradle **Help** group and prints a full `springBootPlugin { ... }` template with all available options.
+
 ## Contributor Workflow
 
 - Follow `CONTRIBUTING.md` for mandatory feature implementation and validation rules.

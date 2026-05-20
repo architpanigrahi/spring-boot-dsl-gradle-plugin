@@ -53,6 +53,29 @@ class SpringBootPluginFunctionalTest {
     }
 
     @Test
+    fun `prints dsl options task output`() {
+        writeBuildFile(
+            """
+            plugins {
+                id("io.github.architpanigrahi.springbootdsl")
+            }
+
+            repositories {
+                mavenCentral()
+            }
+            """.trimIndent(),
+        )
+
+        val result = runGradle("springBootDslOptions")
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":springBootDslOptions")?.outcome)
+        assertTrue(result.output.contains("springBootPlugin {"))
+        assertTrue(result.output.contains("web {"))
+        assertTrue(result.output.contains("auth {"))
+        assertTrue(result.output.contains("includeCompanionTests()"))
+    }
+
+    @Test
     fun `adds dependencies for selected DSL features`() {
         writeBuildFile(
             """
