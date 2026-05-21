@@ -4,6 +4,18 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-05-21
+
+- Added improved web diagnostics for client-only selections (`restClient()`/`webClient()`) with explicit server-vs-client guidance.
+- Expanded web conflict validation messaging with canonical server+client combinations.
+- Added README examples for:
+  - MVC server + WebClient
+  - Reactive server + RestClient
+  - Client-only projects
+- Added README capability matrix mapping DSL methods to runtime and companion test dependencies.
+- Added maintainer task `verifyCatalogCoordinates` to resolve and verify all catalog dependency coordinates before release.
+- Expanded `springBootDslOptions --block=<name>` functional coverage across all supported blocks.
+
 ## [0.1.2] - 2026-05-21
 
 - Enhanced helper task `springBootDslOptions` (group: `Help`) to print an uncommented full DSL template with all options.

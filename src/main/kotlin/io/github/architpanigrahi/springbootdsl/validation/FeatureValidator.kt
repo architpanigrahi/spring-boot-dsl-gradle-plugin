@@ -8,6 +8,7 @@ class FeatureValidator(
     private val rules: List<FeatureValidationRule> =
         listOf(
             WebStackCombinationExclusiveRule,
+            WebClientsWithoutServerGuidanceRule,
             MigrationEngineExclusiveRule,
         ),
 ) {

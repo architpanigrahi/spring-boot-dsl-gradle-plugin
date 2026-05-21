@@ -21,7 +21,9 @@ object WebStackCombinationExclusiveRule : FeatureValidationRule {
         if (webFeatureWasJustAdded && bothWebStacksSelected) {
             throw GradleException(
                 "mvc() and reactiveServer() cannot be selected together. " +
-                    "Choose exactly one web stack.",
+                    "Choose exactly one server stack. " +
+                    "Canonical combinations: " +
+                    "web { mvc(); webClient() } or web { reactiveServer(); restClient() }.",
             )
         }
     }

@@ -101,6 +101,38 @@ class SpringBootPluginFunctionalTest {
     }
 
     @Test
+    fun `prints in-depth block help for all blocks`() {
+        writeBuildFile(
+            """
+            plugins {
+                id("io.github.architpanigrahi.springbootdsl")
+            }
+
+            repositories {
+                mavenCentral()
+            }
+            """.trimIndent(),
+        )
+
+        val blockExpectations =
+            mapOf(
+                "data" to "Block: data",
+                "auth" to "Block: auth",
+                "ops" to "Block: ops",
+                "migrations" to "Block: migrations",
+                "devTools" to "Block: devTools",
+                "test" to "Block: test",
+            )
+
+        blockExpectations.forEach { (block, expectedHeader) ->
+            val result = runGradle("springBootDslOptions", "--block=$block")
+
+            assertEquals(TaskOutcome.SUCCESS, result.task(":springBootDslOptions")?.outcome)
+            assertTrue(result.output.contains(expectedHeader), "Expected block header for --block=$block")
+        }
+    }
+
+    @Test
     fun `prints unknown block guidance`() {
         writeBuildFile(
             """
@@ -265,6 +297,10 @@ class SpringBootPluginFunctionalTest {
             result.output.contains("mvc() and reactiveServer() cannot be selected together."),
             "Expected mutually exclusive web stack validation error",
         )
+        assertTrue(
+            result.output.contains("web { mvc(); webClient() } or web { reactiveServer(); restClient() }."),
+            "Expected canonical web combination guidance in build output",
+        )
     }
 
     @Test
@@ -361,6 +397,68 @@ class SpringBootPluginFunctionalTest {
         val result = runGradle("verifyClientDependencies")
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":verifyClientDependencies")?.outcome)
+    }
+
+    @Test
+    fun `shows guidance when only web clients are selected`() {
+        writeBuildFile(
+            """
+            plugins {
+                id("io.github.architpanigrahi.springbootdsl")
+            }
+
+            repositories {
+                mavenCentral()
+            }
+
+            springBootPlugin {
+                web {
+                    restClient()
+                    webClient()
+                }
+            }
+            """.trimIndent(),
+        )
+
+        val result = runGradle("help")
+
+        assertTrue(
+            result.output.contains("selects HTTP clients only and does not select a server stack."),
+            "Expected client-only web guidance warning in output",
+        )
+        assertTrue(
+            result.output.contains("web { mvc(); webClient() } or web { reactiveServer(); restClient() }."),
+            "Expected canonical server combination guidance in output",
+        )
+    }
+
+    @Test
+    fun `does not show client-only guidance when server stack is selected`() {
+        writeBuildFile(
+            """
+            plugins {
+                id("io.github.architpanigrahi.springbootdsl")
+            }
+
+            repositories {
+                mavenCentral()
+            }
+
+            springBootPlugin {
+                web {
+                    mvc()
+                    webClient()
+                }
+            }
+            """.trimIndent(),
+        )
+
+        val result = runGradle("help")
+
+        assertTrue(
+            result.output.contains("selects HTTP clients only and does not select a server stack.").not(),
+            "Did not expect client-only guidance when a server stack is selected",
+        )
     }
 
     @Test

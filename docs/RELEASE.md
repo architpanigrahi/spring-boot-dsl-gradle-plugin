@@ -6,6 +6,7 @@
 2. Move `Unreleased` entries in `CHANGELOG.md` into a versioned section with date.
 3. Verify compatibility matrix in `README.md` is accurate.
 4. Run:
+   - `./gradlew verifyCatalogCoordinates`
    - `./gradlew clean test ktlintCheck`
 5. Verify CI status is green for all Java matrix jobs.
 6. Validate smoke consumer build path in CI.

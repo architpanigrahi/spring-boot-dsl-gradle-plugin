@@ -40,6 +40,7 @@ Every new feature must include all of the following:
 
 - Kotlin style is enforced with `ktlint`.
 - CI fails if `ktlintCheck` or tests fail.
+- Run `./gradlew verifyCatalogCoordinates` when adding/changing dependency notations.
 - Keep code ASCII unless existing file already requires otherwise.
 - Keep implementation focused and avoid unrelated refactors.
 
@@ -51,4 +52,5 @@ Every new feature must include all of the following:
 - [ ] Added functional test coverage for success and failure paths
 - [ ] Updated `README.md` usage and compatibility docs
 - [ ] Updated `CHANGELOG.md`
+- [ ] Ran `./gradlew verifyCatalogCoordinates`
 - [ ] Ran `./gradlew clean test ktlintCheck`

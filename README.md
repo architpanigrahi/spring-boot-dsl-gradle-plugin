@@ -15,7 +15,7 @@ Instead of repeating standard Spring Boot plugin and dependency declarations acr
 
 | Component | Supported |
 | --- | --- |
-| Plugin version | `0.1.2` |
+| Plugin version | `0.1.3` |
 | Gradle | `9.2.1+` |
 | Java toolchain | `21` |
 | Spring Boot line | `4.0.x` |
@@ -25,7 +25,7 @@ Instead of repeating standard Spring Boot plugin and dependency declarations acr
 
 ```kotlin
 plugins {
-    id("io.github.architpanigrahi.springbootdsl") version "0.1.2"
+    id("io.github.architpanigrahi.springbootdsl") version "0.1.3"
 }
 
 repositories {
@@ -96,6 +96,32 @@ web {
 - `reactiveServer()` selects WebFlux server starter.
 - `restClient()` adds the blocking HTTP client stack.
 - `webClient()` adds the reactive HTTP client stack.
+
+Canonical server + client combinations:
+
+```kotlin
+// MVC server + WebClient
+web {
+    mvc()
+    webClient()
+}
+```
+
+```kotlin
+// Reactive server + RestClient
+web {
+    reactiveServer()
+    restClient()
+}
+```
+
+```kotlin
+// Client-only project (no embedded server selected)
+web {
+    restClient()
+    webClient()
+}
+```
 
 ### Data
 
@@ -189,6 +215,29 @@ Companion test dependencies (when enabled):
 - `ops.actuator()` -> `spring-boot-starter-actuator-test`
 - `migrations.flyway()` / `migrations.liquibase()` -> `spring-boot-starter-test`
 
+## Capability Matrix
+
+| DSL Capability | Runtime Dependency | Companion Test Dependency (`includeCompanionTests()`) | Notes |
+| --- | --- | --- | --- |
+| `web.mvc()` | `org.springframework.boot:spring-boot-starter-webmvc` | `org.springframework.boot:spring-boot-starter-webmvc-test` | Mutually exclusive with `reactiveServer()` |
+| `web.reactiveServer()` | `org.springframework.boot:spring-boot-starter-webflux` | `org.springframework.boot:spring-boot-starter-webflux-test` | Mutually exclusive with `mvc()` |
+| `web.restClient()` | `org.springframework.boot:spring-boot-starter-restclient` | `org.springframework.boot:spring-boot-starter-restclient-test` | Can be used with either server stack or client-only |
+| `web.webClient()` | `org.springframework.boot:spring-boot-starter-webclient` | `org.springframework.boot:spring-boot-starter-webclient-test` | Can be used with either server stack or client-only |
+| `data.jpa()` | `org.springframework.boot:spring-boot-starter-data-jpa` | `org.springframework.boot:spring-boot-starter-data-jpa-test` | Requires one driver via `postgres()` / `mysql()` / `h2()` |
+| `data.jpa { postgres() }` | `org.postgresql:postgresql` | — | Driver only |
+| `data.jpa { mysql() }` | `com.mysql:mysql-connector-j` | — | Driver only |
+| `data.jpa { h2() }` | `com.h2database:h2`, `org.springframework.boot:spring-boot-h2console` | — | H2 runtime + console |
+| `data.redis()` | `org.springframework.boot:spring-boot-starter-data-redis` | `org.springframework.boot:spring-boot-starter-data-redis-test` | Optional module |
+| `data.mongo()` | `org.springframework.boot:spring-boot-starter-data-mongodb` | `org.springframework.boot:spring-boot-starter-data-mongodb-test` | Optional module |
+| `auth.security()` | `org.springframework.boot:spring-boot-starter-security` | `org.springframework.boot:spring-boot-starter-security-test` | Base security stack |
+| `auth.jwt()` | `org.springframework.boot:spring-boot-starter-oauth2-resource-server` | `org.springframework.boot:spring-boot-starter-security-oauth2-resource-server-test` | JWT resource server |
+| `auth.oauth2Client()` | `org.springframework.boot:spring-boot-starter-oauth2-client` | `org.springframework.boot:spring-boot-starter-security-oauth2-client-test` | OAuth2 client |
+| `ops.actuator()` | `org.springframework.boot:spring-boot-starter-actuator` | `org.springframework.boot:spring-boot-starter-actuator-test` | Ops endpoints |
+| `migrations.flyway()` | `org.flywaydb:flyway-core` | `org.springframework.boot:spring-boot-starter-test` | Exactly one migration engine required |
+| `migrations.liquibase()` | `org.liquibase:liquibase-core` | `org.springframework.boot:spring-boot-starter-test` | Exactly one migration engine required |
+| `devTools.lombok()` | `org.projectlombok:lombok` (`compileOnly`, `annotationProcessor`) | — | Build-time only |
+| `test.springBootTest()` | — | `org.springframework.boot:spring-boot-starter-test` | Explicit test stack |
+
 ## Block Naming
 
 - Canonical blocks are `web`, `data`, `auth`, `ops`, `migrations`, `devTools`, and `test`.
@@ -199,6 +248,7 @@ Companion test dependencies (when enabled):
 - `data { jpa { ... } }` requires exactly one driver (`postgres()`, `mysql()`, or `h2()`).
 - `mvc()` and `reactiveServer()` are mutually exclusive server options.
 - `restClient()` and `webClient()` can be selected together.
+- Selecting only `restClient()`/`webClient()` is valid and treated as client-only configuration.
 - `migrations { ... }` requires exactly one engine (`flyway()` or `liquibase()`).
 - `flyway()` and `liquibase()` are mutually exclusive and fail the build if selected together.
 - Companion test dependencies are only added when `includeCompanionTests()` is selected.
@@ -248,6 +298,7 @@ For in-depth help for one block:
 
 The plugin follows semantic versioning.
 
+- `0.1.3` — Web/client diagnostics improvements, capability matrix, all-block deep-help tests, and catalog coordinate verification task.
 - `0.1.2` — DSL options task deep-help mode, corrected client starter coordinates, and expanded architecture/roadmap docs.
 - `0.1.1` — Canonical DSL naming, auth expansion, companion test mappings, and dependency report output.
 - `0.1.0` — Initial public release

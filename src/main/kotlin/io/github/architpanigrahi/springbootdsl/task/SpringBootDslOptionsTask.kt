@@ -95,6 +95,10 @@ abstract class SpringBootDslOptionsTask : DefaultTask() {
                 Rules:
                 - mvc() and reactiveServer() are mutually exclusive.
                 - restClient() and webClient() can be used together.
+                - restClient()/webClient() without mvc()/reactiveServer() is valid for client-only projects.
+                Canonical server combinations:
+                - web { mvc(); webClient() }
+                - web { reactiveServer(); restClient() }
                 """.trimIndent()
             "data" ->
                 """

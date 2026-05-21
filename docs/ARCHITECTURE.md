@@ -70,6 +70,8 @@ This split ensures:
 
 - Web server exclusivity:
   - `mvc()` and `reactiveServer()` cannot be selected together.
+- Web client-only guidance:
+  - selecting only `restClient()` / `webClient()` is valid and emits diagnostics clarifying that no server stack is selected.
 - Migration engine exclusivity:
   - `flyway()` and `liquibase()` cannot be selected together.
 - Migration block requirement:
