@@ -4,8 +4,16 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-05-21
+
 - Enhanced helper task `springBootDslOptions` (group: `Help`) to print an uncommented full DSL template with all options.
 - Added `springBootDslOptions --block=<name>` for in-depth, block-specific help (`web`, `data`, `auth`, `ops`, `migrations`, `devTools`, `test`).
+- Added resolution-level functional coverage to validate `restClient()` and `webClient()` dependency coordinates on runtime/test classpaths.
+- Corrected client dependency mappings to use dedicated Spring Boot 4 client starters:
+  - `restClient()` -> `spring-boot-starter-restclient`
+  - `webClient()` -> `spring-boot-starter-webclient`
+  - companion tests -> `spring-boot-starter-restclient-test` and `spring-boot-starter-webclient-test`
+- Expanded architecture documentation and added a detailed roadmap document for feature growth planning.
 - Expanded functional tests for new success/failure/reporting/help-task paths.
 
 ## [0.1.1] - 2026-05-20

@@ -90,8 +90,8 @@ abstract class SpringBootDslOptionsTask : DefaultTask() {
                 Options:
                 - mvc() -> Adds spring-boot-starter-webmvc (server).
                 - reactiveServer() -> Adds spring-boot-starter-webflux (server).
-                - restClient() -> Adds spring-boot-starter-webmvc (blocking client stack).
-                - webClient() -> Adds spring-boot-starter-webflux (reactive client stack).
+                - restClient() -> Adds spring-boot-starter-restclient (blocking client stack).
+                - webClient() -> Adds spring-boot-starter-webclient (reactive client stack).
                 Rules:
                 - mvc() and reactiveServer() are mutually exclusive.
                 - restClient() and webClient() can be used together.

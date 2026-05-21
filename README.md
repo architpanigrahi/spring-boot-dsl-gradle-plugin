@@ -15,7 +15,7 @@ Instead of repeating standard Spring Boot plugin and dependency declarations acr
 
 | Component | Supported |
 | --- | --- |
-| Plugin version | `0.1.1` |
+| Plugin version | `0.1.2` |
 | Gradle | `9.2.1+` |
 | Java toolchain | `21` |
 | Spring Boot line | `4.0.x` |
@@ -25,7 +25,7 @@ Instead of repeating standard Spring Boot plugin and dependency declarations acr
 
 ```kotlin
 plugins {
-    id("io.github.architpanigrahi.springbootdsl") version "0.1.1"
+    id("io.github.architpanigrahi.springbootdsl") version "0.1.2"
 }
 
 repositories {
@@ -178,8 +178,8 @@ Companion test dependencies (when enabled):
 
 - `web.mvc()` -> `spring-boot-starter-webmvc-test`
 - `web.reactiveServer()` -> `spring-boot-starter-webflux-test`
-- `web.restClient()` -> `spring-boot-starter-webmvc-test`
-- `web.webClient()` -> `spring-boot-starter-webflux-test`
+- `web.restClient()` -> `spring-boot-starter-restclient-test`
+- `web.webClient()` -> `spring-boot-starter-webclient-test`
 - `auth.security()` -> `spring-boot-starter-security-test`
 - `auth.jwt()` -> `spring-boot-starter-security-oauth2-resource-server-test`
 - `auth.oauth2Client()` -> `spring-boot-starter-security-oauth2-client-test`
@@ -248,8 +248,15 @@ For in-depth help for one block:
 
 The plugin follows semantic versioning.
 
+- `0.1.2` — DSL options task deep-help mode, corrected client starter coordinates, and expanded architecture/roadmap docs.
 - `0.1.1` — Canonical DSL naming, auth expansion, companion test mappings, and dependency report output.
 - `0.1.0` — Initial public release
+
+## Project Docs
+
+- Architecture: `docs/ARCHITECTURE.md`
+- Roadmap: `docs/ROADMAP.md`
+- Release process: `docs/RELEASE.md`
 
 ## Local Development
 

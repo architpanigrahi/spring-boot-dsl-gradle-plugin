@@ -174,7 +174,6 @@ class SpringBootPluginFunctionalTest {
                         }
 
                     check(hasDependency("implementation", "spring-boot-starter-webmvc"))
-                    check(hasDependency("implementation", "spring-boot-starter-webflux"))
                     check(hasDependency("implementation", "spring-boot-starter-actuator"))
                     check(hasDependency("implementation", "spring-boot-starter-security"))
                     check(hasDependency("implementation", "spring-boot-starter-oauth2-resource-server"))
@@ -183,13 +182,16 @@ class SpringBootPluginFunctionalTest {
                     check(hasDependency("implementation", "spring-boot-starter-data-jpa"))
                     check(hasDependency("implementation", "spring-boot-starter-data-redis"))
                     check(hasDependency("implementation", "spring-boot-starter-data-mongodb"))
+                    check(hasDependency("implementation", "spring-boot-starter-restclient"))
+                    check(hasDependency("implementation", "spring-boot-starter-webclient"))
                     check(hasDependency("runtimeOnly", "h2"))
                     check(hasDependency("runtimeOnly", "spring-boot-h2console"))
                     check(hasDependency("compileOnly", "lombok"))
                     check(hasDependency("annotationProcessor", "lombok"))
                     check(hasDependency("testImplementation", "spring-boot-starter-test"))
                     check(hasDependency("testImplementation", "spring-boot-starter-webmvc-test"))
-                    check(hasDependency("testImplementation", "spring-boot-starter-webflux-test"))
+                    check(hasDependency("testImplementation", "spring-boot-starter-restclient-test"))
+                    check(hasDependency("testImplementation", "spring-boot-starter-webclient-test"))
                     check(hasDependency("testImplementation", "spring-boot-starter-security-test"))
                     check(hasDependency("testImplementation", "spring-boot-starter-security-oauth2-client-test"))
                     check(hasDependency("testImplementation", "spring-boot-starter-security-oauth2-resource-server-test"))
@@ -349,8 +351,8 @@ class SpringBootPluginFunctionalTest {
                             dependency.name == dependencyName
                         }
 
-                    check(hasDependency("implementation", "spring-boot-starter-webmvc"))
-                    check(hasDependency("implementation", "spring-boot-starter-webflux"))
+                    check(hasDependency("implementation", "spring-boot-starter-restclient"))
+                    check(hasDependency("implementation", "spring-boot-starter-webclient"))
                 }
             }
             """.trimIndent(),
@@ -359,6 +361,57 @@ class SpringBootPluginFunctionalTest {
         val result = runGradle("verifyClientDependencies")
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":verifyClientDependencies")?.outcome)
+    }
+
+    @Test
+    fun `resolves rest and reactive client dependencies on classpaths`() {
+        writeBuildFile(
+            """
+            plugins {
+                id("io.github.architpanigrahi.springbootdsl")
+            }
+
+            repositories {
+                mavenCentral()
+            }
+
+            springBootPlugin {
+                web {
+                    restClient()
+                    webClient()
+                }
+                test {
+                    includeCompanionTests()
+                }
+            }
+
+            tasks.register("verifyClientResolution") {
+                doLast {
+                    val runtimeArtifacts = configurations.getByName("runtimeClasspath")
+                        .resolvedConfiguration
+                        .resolvedArtifacts
+                        .map { "${'$'}{it.moduleVersion.id.group}:${'$'}{it.name}" }
+                        .toSet()
+
+                    check(runtimeArtifacts.contains("org.springframework.boot:spring-boot-starter-restclient"))
+                    check(runtimeArtifacts.contains("org.springframework.boot:spring-boot-starter-webclient"))
+
+                    val testRuntimeArtifacts = configurations.getByName("testRuntimeClasspath")
+                        .resolvedConfiguration
+                        .resolvedArtifacts
+                        .map { "${'$'}{it.moduleVersion.id.group}:${'$'}{it.name}" }
+                        .toSet()
+
+                    check(testRuntimeArtifacts.contains("org.springframework.boot:spring-boot-starter-restclient-test"))
+                    check(testRuntimeArtifacts.contains("org.springframework.boot:spring-boot-starter-webclient-test"))
+                }
+            }
+            """.trimIndent(),
+        )
+
+        val result = runGradle("verifyClientResolution")
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":verifyClientResolution")?.outcome)
     }
 
     @Test
@@ -393,7 +446,8 @@ class SpringBootPluginFunctionalTest {
                         }
 
                     check(hasDependency("testImplementation", "spring-boot-starter-webmvc-test").not())
-                    check(hasDependency("testImplementation", "spring-boot-starter-webflux-test").not())
+                    check(hasDependency("testImplementation", "spring-boot-starter-restclient-test").not())
+                    check(hasDependency("testImplementation", "spring-boot-starter-webclient-test").not())
                     check(hasDependency("testImplementation", "spring-boot-starter-security-test").not())
                 }
             }
@@ -437,8 +491,8 @@ class SpringBootPluginFunctionalTest {
                             dependency.name == dependencyName
                         }
 
-                    check(hasDependency("testImplementation", "spring-boot-starter-webmvc-test"))
-                    check(hasDependency("testImplementation", "spring-boot-starter-webflux-test"))
+                    check(hasDependency("testImplementation", "spring-boot-starter-restclient-test"))
+                    check(hasDependency("testImplementation", "spring-boot-starter-webclient-test"))
                     check(hasDependency("testImplementation", "spring-boot-starter-security-test"))
                 }
             }
@@ -489,8 +543,8 @@ class SpringBootPluginFunctionalTest {
         assertTrue(report.contains("auth { security() }"))
         assertTrue(report.contains("auth { jwt() }"))
         assertTrue(report.contains("implementation: org.springframework.boot:spring-boot-starter-webmvc"))
-        assertTrue(report.contains("implementation: org.springframework.boot:spring-boot-starter-webflux"))
-        assertTrue(report.contains("testImplementation: org.springframework.boot:spring-boot-starter-webflux-test"))
+        assertTrue(report.contains("implementation: org.springframework.boot:spring-boot-starter-webclient"))
+        assertTrue(report.contains("testImplementation: org.springframework.boot:spring-boot-starter-webclient-test"))
     }
 
     private fun writeBuildFile(contents: String) {

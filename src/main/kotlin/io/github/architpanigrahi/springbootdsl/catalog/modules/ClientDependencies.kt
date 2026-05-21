@@ -11,14 +11,14 @@ internal val clientDependencies: Map<SpringFeature, List<DependencyDeclaration>>
             listOf(
                 DependencyDeclaration(
                     configuration = IMPLEMENTATION,
-                    notation = "org.springframework.boot:spring-boot-starter-webmvc",
+                    notation = "org.springframework.boot:spring-boot-starter-restclient",
                 ),
             ),
         SpringFeature.HTTP_CLIENT_REACTIVE to
             listOf(
                 DependencyDeclaration(
                     configuration = IMPLEMENTATION,
-                    notation = "org.springframework.boot:spring-boot-starter-webflux",
+                    notation = "org.springframework.boot:spring-boot-starter-webclient",
                 ),
             ),
     )
@@ -29,14 +29,14 @@ internal val clientTestCompanionDependencies: Map<SpringFeature, List<Dependency
             listOf(
                 DependencyDeclaration(
                     configuration = TEST_IMPLEMENTATION,
-                    notation = "org.springframework.boot:spring-boot-starter-webmvc-test",
+                    notation = "org.springframework.boot:spring-boot-starter-restclient-test",
                 ),
             ),
         SpringFeature.HTTP_CLIENT_REACTIVE to
             listOf(
                 DependencyDeclaration(
                     configuration = TEST_IMPLEMENTATION,
-                    notation = "org.springframework.boot:spring-boot-starter-webflux-test",
+                    notation = "org.springframework.boot:spring-boot-starter-webclient-test",
                 ),
             ),
     )
