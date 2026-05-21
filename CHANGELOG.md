@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-05-21
+
+- Added CI publish stage as the final pipeline job.
+- Publish now runs on `main` pushes only when the `version =` line changes in `build.gradle.kts`.
+- Added secure GitHub Actions secret wiring for Plugin Portal publishing:
+  - `GRADLE_PUBLISH_KEY`
+  - `GRADLE_PUBLISH_SECRET`
+
 ## [0.1.4] - 2026-05-21
 
 - Added automatic macOS ARM64 runtime dependency for `webClient()`:

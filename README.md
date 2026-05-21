@@ -15,7 +15,7 @@ Instead of repeating standard Spring Boot plugin and dependency declarations acr
 
 | Component | Supported |
 | --- | --- |
-| Plugin version | `0.1.4` |
+| Plugin version | `0.1.5` |
 | Gradle | `9.2.1+` |
 | Java toolchain | `21` |
 | Spring Boot line | `4.0.x` |
@@ -25,7 +25,7 @@ Instead of repeating standard Spring Boot plugin and dependency declarations acr
 
 ```kotlin
 plugins {
-    id("io.github.architpanigrahi.springbootdsl") version "0.1.4"
+    id("io.github.architpanigrahi.springbootdsl") version "0.1.5"
 }
 
 repositories {
@@ -299,6 +299,7 @@ For in-depth help for one block:
 
 The plugin follows semantic versioning.
 
+- `0.1.5` — CI final-stage auto-publish to Gradle Plugin Portal on version-line changes in `build.gradle.kts`.
 - `0.1.4` — macOS ARM64 `webClient()` Netty DNS native resolver auto-inclusion.
 - `0.1.3` — Web/client diagnostics improvements, capability matrix, all-block deep-help tests, and catalog coordinate verification task.
 - `0.1.2` — DSL options task deep-help mode, corrected client starter coordinates, and expanded architecture/roadmap docs.

@@ -74,3 +74,67 @@ jobs:
           rootProject.name = "smoke-consumer"
           EOF
           ../../../../gradlew help --stacktrace
+
+  publish:
+    name: Publish Plugin Portal
+    needs: smoke
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+
+      - name: Detect version change in build.gradle.kts
+        id: version_check
+        shell: bash
+        run: |
+          set -euo pipefail
+          BEFORE_SHA="${{ github.event.before }}"
+          CURRENT_SHA="${{ github.sha }}"
+
+          if [[ "$BEFORE_SHA" == "0000000000000000000000000000000000000000" ]]; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "No previous commit available in push payload."
+            exit 0
+          fi
+
+          if ! git diff --name-only "$BEFORE_SHA" "$CURRENT_SHA" -- build.gradle.kts | grep -q "build.gradle.kts"; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "build.gradle.kts not changed."
+            exit 0
+          fi
+
+          old_version_line="$(git show "$BEFORE_SHA:build.gradle.kts" | grep -E '^[[:space:]]*version[[:space:]]*=' || true)"
+          new_version_line="$(git show "$CURRENT_SHA:build.gradle.kts" | grep -E '^[[:space:]]*version[[:space:]]*=' || true)"
+
+          if [[ -z "$old_version_line" || -z "$new_version_line" ]]; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "Could not read version line(s) from build.gradle.kts."
+            exit 0
+          fi
+
+          if [[ "$old_version_line" != "$new_version_line" ]]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+            echo "Detected version change:"
+            echo "OLD: $old_version_line"
+            echo "NEW: $new_version_line"
+          else
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "build.gradle.kts changed, but version line is unchanged."
+          fi
+
+      - name: Publish to Gradle Plugin Portal
+        if: steps.version_check.outputs.publish == 'true'
+        env:
+          GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
+          GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
+        run: ./gradlew publishPlugins --stacktrace

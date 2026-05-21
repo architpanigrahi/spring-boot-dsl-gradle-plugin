@@ -15,6 +15,7 @@
 
 - Plugin id: `io.github.architpanigrahi.springbootdsl`
 - Publishing metadata and plugin portal settings live in `build.gradle.kts`.
+- Publish runs as the final pipeline stage on pushes to `main` only when the `version =` line changes in `build.gradle.kts`.
 - Keep release notes focused on:
   - added DSL capabilities
   - validation behavior changes
