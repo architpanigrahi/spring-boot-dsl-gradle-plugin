@@ -513,6 +513,54 @@ class SpringBootPluginFunctionalTest {
     }
 
     @Test
+    fun `adds macOS native netty resolver for webClient on arm64`() {
+        writeBuildFile(
+            """
+            plugins {
+                id("io.github.architpanigrahi.springbootdsl")
+            }
+
+            repositories {
+                mavenCentral()
+            }
+
+            springBootPlugin {
+                web {
+                    webClient()
+                }
+            }
+
+            tasks.register("verifyMacOsNettyResolver") {
+                doLast {
+                    val osName = System.getProperty("os.name").orEmpty().lowercase()
+                    val osArch = System.getProperty("os.arch").orEmpty().lowercase()
+                    val shouldInclude = osName.contains("mac") && (osArch.contains("aarch64") || osArch.contains("arm64"))
+
+                    val nettyDependency =
+                        configurations.getByName("runtimeOnly")
+                            .dependencies
+                            .withType(org.gradle.api.artifacts.ExternalModuleDependency::class.java)
+                            .find { dependency ->
+                                dependency.group == "io.netty" && dependency.name == "netty-resolver-dns-native-macos"
+                            }
+
+                    if (shouldInclude) {
+                        check(nettyDependency != null)
+                        check(nettyDependency!!.artifacts.any { artifact -> artifact.classifier == "osx-aarch_64" })
+                    } else {
+                        check(nettyDependency == null)
+                    }
+                }
+            }
+            """.trimIndent(),
+        )
+
+        val result = runGradle("verifyMacOsNettyResolver")
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":verifyMacOsNettyResolver")?.outcome)
+    }
+
+    @Test
     fun `does not add companion test dependencies unless enabled`() {
         writeBuildFile(
             """

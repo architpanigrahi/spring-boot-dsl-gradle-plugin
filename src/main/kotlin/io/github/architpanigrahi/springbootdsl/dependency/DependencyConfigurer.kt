@@ -1,14 +1,22 @@
 package io.github.architpanigrahi.springbootdsl.dependency
 
 import io.github.architpanigrahi.springbootdsl.catalog.DependencyCatalog
+import io.github.architpanigrahi.springbootdsl.dependency.DependencyConfiguration.RUNTIME_ONLY
 import io.github.architpanigrahi.springbootdsl.feature.SpringFeature
+import io.github.architpanigrahi.springbootdsl.feature.SpringFeature.HTTP_CLIENT_REACTIVE
 import org.gradle.api.Project
 import java.time.Instant
 
 class DependencyConfigurer(
     private val project: Project,
 ) {
-    private val appliedDependencies = mutableSetOf<Pair<String, String>>()
+    private data class AppliedDependency(
+        val configuration: String,
+        val notation: String,
+        val classifier: String?,
+    )
+
+    private val appliedDependencies = mutableSetOf<AppliedDependency>()
     private val dependenciesByFeature = linkedMapOf<SpringFeature, MutableList<DependencyDeclaration>>()
     private var companionTestsEnabled = false
 
@@ -16,6 +24,10 @@ class DependencyConfigurer(
         val mainDependencies = DependencyCatalog.dependenciesFor(feature)
         applyDependencies(mainDependencies)
         appendFeatureDependencies(feature, mainDependencies)
+
+        val platformDependencies = platformDependenciesFor(feature)
+        applyDependencies(platformDependencies)
+        appendFeatureDependencies(feature, platformDependencies)
 
         if (companionTestsEnabled) {
             val companionDependencies = DependencyCatalog.companionTestDependenciesFor(feature)
@@ -53,17 +65,26 @@ class DependencyConfigurer(
 
     private fun applyDependencies(dependencies: List<DependencyDeclaration>) {
         dependencies.forEach { dependency ->
-            val key = dependency.configuration.gradleName to dependency.notation
+            val key =
+                AppliedDependency(
+                    configuration = dependency.configuration.gradleName,
+                    notation = dependency.notation,
+                    classifier = dependency.classifier,
+                )
             val isNewDependency = appliedDependencies.add(key)
 
             if (!isNewDependency) {
                 return@forEach
             }
 
-            project.dependencies.add(
-                dependency.configuration.gradleName,
-                dependency.notation,
-            )
+            val gradleDependency =
+                project.dependencies.create(
+                    classifierAwareNotation(
+                        notation = dependency.notation,
+                        classifier = dependency.classifier,
+                    ),
+                )
+            project.dependencies.add(dependency.configuration.gradleName, gradleDependency)
         }
     }
 
@@ -79,7 +100,9 @@ class DependencyConfigurer(
         dependencies.forEach { dependency ->
             val alreadyTracked =
                 featureDependencies.any {
-                    it.configuration == dependency.configuration && it.notation == dependency.notation
+                    it.configuration == dependency.configuration &&
+                        it.notation == dependency.notation &&
+                        it.classifier == dependency.classifier
                 }
             if (!alreadyTracked) {
                 featureDependencies.add(dependency)
@@ -98,16 +121,16 @@ class DependencyConfigurer(
         dependenciesByFeature.forEach { (feature, dependencies) ->
             lines += "- ${featureDslLabel(feature)}"
             dependencies.forEach { dependency ->
-                lines += "  - ${dependency.configuration.gradleName}: ${dependency.notation}"
+                lines += "  - ${dependency.configuration.gradleName}: ${dependencyDisplayNotation(dependency)}"
             }
         }
 
         lines += ""
         lines += "All plugin-applied dependencies (deduplicated):"
         appliedDependencies
-            .sortedWith(compareBy({ it.first }, { it.second }))
-            .forEach { (configuration, notation) ->
-                lines += "- $configuration: $notation"
+            .sortedWith(compareBy({ it.configuration }, { it.notation }, { it.classifier ?: "" }))
+            .forEach { dependency ->
+                lines += "- ${dependency.configuration}: ${dependencyDisplayNotation(dependency.notation, dependency.classifier)}"
             }
 
         return lines.joinToString(separator = "\n", postfix = "\n")
@@ -134,5 +157,69 @@ class DependencyConfigurer(
             SpringFeature.LIQUIBASE_MIGRATION -> "migrations { liquibase() }"
             SpringFeature.SPRING_BOOT_TEST -> "test { springBootTest() }"
         }
+    }
+
+    private fun platformDependenciesFor(feature: SpringFeature): List<DependencyDeclaration> {
+        if (feature != HTTP_CLIENT_REACTIVE) {
+            return emptyList()
+        }
+
+        val osName = System.getProperty("os.name").orEmpty().lowercase()
+        val osArch = System.getProperty("os.arch").orEmpty().lowercase()
+
+        val macArm64 = osName.contains("mac") && (osArch.contains("aarch64") || osArch.contains("arm64"))
+        if (!macArm64) {
+            return emptyList()
+        }
+
+        return listOf(macosArm64NettyDnsResolver)
+    }
+
+    private fun dependencyDisplayNotation(dependency: DependencyDeclaration): String {
+        return dependencyDisplayNotation(dependency.notation, dependency.classifier)
+    }
+
+    private fun dependencyDisplayNotation(
+        notation: String,
+        classifier: String?,
+    ): String {
+        return if (classifier == null) {
+            notation
+        } else {
+            "$notation (classifier=$classifier)"
+        }
+    }
+
+    private fun classifierAwareNotation(
+        notation: String,
+        classifier: String?,
+    ): String {
+        if (classifier == null) {
+            return notation
+        }
+
+        val segments = notation.split(":")
+        if (segments.size < 2) {
+            return notation
+        }
+
+        val group = segments[0]
+        val artifact = segments[1]
+        val version = segments.getOrNull(2).orEmpty()
+
+        return if (version.isBlank()) {
+            "$group:$artifact::$classifier"
+        } else {
+            "$group:$artifact:$version:$classifier"
+        }
+    }
+
+    companion object {
+        private val macosArm64NettyDnsResolver =
+            DependencyDeclaration(
+                configuration = RUNTIME_ONLY,
+                notation = "io.netty:netty-resolver-dns-native-macos",
+                classifier = "osx-aarch_64",
+            )
     }
 }

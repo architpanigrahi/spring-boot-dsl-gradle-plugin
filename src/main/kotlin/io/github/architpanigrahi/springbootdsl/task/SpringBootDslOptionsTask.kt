@@ -96,6 +96,7 @@ abstract class SpringBootDslOptionsTask : DefaultTask() {
                 - mvc() and reactiveServer() are mutually exclusive.
                 - restClient() and webClient() can be used together.
                 - restClient()/webClient() without mvc()/reactiveServer() is valid for client-only projects.
+                - On macOS ARM64, webClient() also adds netty-resolver-dns-native-macos (classifier osx-aarch_64).
                 Canonical server combinations:
                 - web { mvc(); webClient() }
                 - web { reactiveServer(); restClient() }

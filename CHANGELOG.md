@@ -4,6 +4,11 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-05-21
+
+- Added automatic macOS ARM64 runtime dependency for `webClient()`:
+  - `io.netty:netty-resolver-dns-native-macos` with classifier `osx-aarch_64`
+
 ## [0.1.3] - 2026-05-21
 
 - Added improved web diagnostics for client-only selections (`restClient()`/`webClient()`) with explicit server-vs-client guidance.

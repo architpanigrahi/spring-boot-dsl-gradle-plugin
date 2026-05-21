@@ -15,7 +15,7 @@ Instead of repeating standard Spring Boot plugin and dependency declarations acr
 
 | Component | Supported |
 | --- | --- |
-| Plugin version | `0.1.3` |
+| Plugin version | `0.1.4` |
 | Gradle | `9.2.1+` |
 | Java toolchain | `21` |
 | Spring Boot line | `4.0.x` |
@@ -25,7 +25,7 @@ Instead of repeating standard Spring Boot plugin and dependency declarations acr
 
 ```kotlin
 plugins {
-    id("io.github.architpanigrahi.springbootdsl") version "0.1.3"
+    id("io.github.architpanigrahi.springbootdsl") version "0.1.4"
 }
 
 repositories {
@@ -96,6 +96,7 @@ web {
 - `reactiveServer()` selects WebFlux server starter.
 - `restClient()` adds the blocking HTTP client stack.
 - `webClient()` adds the reactive HTTP client stack.
+- On macOS ARM64, `webClient()` also adds `runtimeOnly("io.netty:netty-resolver-dns-native-macos")` with classifier `osx-aarch_64`.
 
 Canonical server + client combinations:
 
@@ -298,6 +299,7 @@ For in-depth help for one block:
 
 The plugin follows semantic versioning.
 
+- `0.1.4` — macOS ARM64 `webClient()` Netty DNS native resolver auto-inclusion.
 - `0.1.3` — Web/client diagnostics improvements, capability matrix, all-block deep-help tests, and catalog coordinate verification task.
 - `0.1.2` — DSL options task deep-help mode, corrected client starter coordinates, and expanded architecture/roadmap docs.
 - `0.1.1` — Canonical DSL naming, auth expansion, companion test mappings, and dependency report output.
