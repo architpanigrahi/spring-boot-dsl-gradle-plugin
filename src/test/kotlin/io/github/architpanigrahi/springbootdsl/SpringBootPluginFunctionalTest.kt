@@ -133,6 +133,29 @@ class SpringBootPluginFunctionalTest {
     }
 
     @Test
+    fun `prints auth block options with updated semantics`() {
+        writeBuildFile(
+            """
+            plugins {
+                id("io.github.architpanigrahi.springbootdsl")
+            }
+
+            repositories {
+                mavenCentral()
+            }
+            """.trimIndent(),
+        )
+
+        val result = runGradle("springBootDslOptions", "--block=auth")
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":springBootDslOptions")?.outcome)
+        assertTrue(result.output.contains("oauth2ResourceServer()"))
+        assertTrue(result.output.contains("oauth2AuthServer()"))
+        assertTrue(result.output.contains("saml2()"))
+        assertTrue(result.output.contains("- jwt() ->").not())
+    }
+
+    @Test
     fun `prints unknown block guidance`() {
         writeBuildFile(
             """
@@ -176,8 +199,10 @@ class SpringBootPluginFunctionalTest {
                 }
                 auth {
                     security()
-                    jwt()
+                    oauth2ResourceServer()
                     oauth2Client()
+                    oauth2AuthServer()
+                    saml2()
                 }
                 migrations {
                     flyway()
@@ -210,6 +235,8 @@ class SpringBootPluginFunctionalTest {
                     check(hasDependency("implementation", "spring-boot-starter-security"))
                     check(hasDependency("implementation", "spring-boot-starter-oauth2-resource-server"))
                     check(hasDependency("implementation", "spring-boot-starter-oauth2-client"))
+                    check(hasDependency("implementation", "spring-boot-starter-security-oauth2-authorization-server"))
+                    check(hasDependency("implementation", "spring-boot-starter-security-saml2"))
                     check(hasDependency("implementation", "flyway-core"))
                     check(hasDependency("implementation", "spring-boot-starter-data-jpa"))
                     check(hasDependency("implementation", "spring-boot-starter-data-redis"))
@@ -227,6 +254,8 @@ class SpringBootPluginFunctionalTest {
                     check(hasDependency("testImplementation", "spring-boot-starter-security-test"))
                     check(hasDependency("testImplementation", "spring-boot-starter-security-oauth2-client-test"))
                     check(hasDependency("testImplementation", "spring-boot-starter-security-oauth2-resource-server-test"))
+                    check(hasDependency("testImplementation", "spring-boot-starter-security-oauth2-authorization-server-test"))
+                    check(hasDependency("testImplementation", "spring-boot-starter-security-saml2-test"))
                     check(hasDependency("testImplementation", "spring-boot-starter-data-jpa-test"))
                     check(hasDependency("testImplementation", "spring-boot-starter-data-redis-test"))
                     check(hasDependency("testImplementation", "spring-boot-starter-data-mongodb-test"))
@@ -579,7 +608,7 @@ class SpringBootPluginFunctionalTest {
                 }
                 auth {
                     security()
-                    jwt()
+                    oauth2ResourceServer()
                     oauth2Client()
                 }
             }
@@ -651,6 +680,72 @@ class SpringBootPluginFunctionalTest {
     }
 
     @Test
+    fun `shows guidance for advanced auth without security`() {
+        writeBuildFile(
+            """
+            plugins {
+                id("io.github.architpanigrahi.springbootdsl")
+            }
+
+            repositories {
+                mavenCentral()
+            }
+
+            springBootPlugin {
+                auth {
+                    oauth2ResourceServer()
+                    oauth2AuthServer()
+                    saml2()
+                }
+            }
+            """.trimIndent(),
+        )
+
+        val result = runGradle("help")
+
+        assertTrue(
+            result.output.contains("advanced options selected without security()."),
+            "Expected advanced auth guidance warning in output",
+        )
+        assertTrue(
+            result.output.contains("auth { security(); oauth2Client() } or auth { security(); oauth2ResourceServer() }."),
+            "Expected recommended auth combinations in warning",
+        )
+    }
+
+    @Test
+    fun `does not show advanced auth guidance when security is selected`() {
+        writeBuildFile(
+            """
+            plugins {
+                id("io.github.architpanigrahi.springbootdsl")
+            }
+
+            repositories {
+                mavenCentral()
+            }
+
+            springBootPlugin {
+                auth {
+                    security()
+                    oauth2ResourceServer()
+                    oauth2Client()
+                    oauth2AuthServer()
+                    saml2()
+                }
+            }
+            """.trimIndent(),
+        )
+
+        val result = runGradle("help")
+
+        assertTrue(
+            result.output.contains("advanced options selected without security().").not(),
+            "Did not expect advanced auth guidance when security() is selected",
+        )
+    }
+
+    @Test
     fun `writes dependency report file with feature mappings`() {
         writeBuildFile(
             """
@@ -669,7 +764,7 @@ class SpringBootPluginFunctionalTest {
                 }
                 auth {
                     security()
-                    jwt()
+                    oauth2ResourceServer()
                 }
                 test {
                     includeCompanionTests()
@@ -687,7 +782,7 @@ class SpringBootPluginFunctionalTest {
         assertTrue(report.contains("web { mvc() }"))
         assertTrue(report.contains("web { webClient() }"))
         assertTrue(report.contains("auth { security() }"))
-        assertTrue(report.contains("auth { jwt() }"))
+        assertTrue(report.contains("auth { oauth2ResourceServer() }"))
         assertTrue(report.contains("implementation: org.springframework.boot:spring-boot-starter-webmvc"))
         assertTrue(report.contains("implementation: org.springframework.boot:spring-boot-starter-webclient"))
         assertTrue(report.contains("testImplementation: org.springframework.boot:spring-boot-starter-webclient-test"))

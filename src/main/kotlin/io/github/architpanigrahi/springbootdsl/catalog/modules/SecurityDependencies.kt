@@ -28,6 +28,20 @@ internal val securityDependencies: Map<SpringFeature, List<DependencyDeclaration
                     notation = "org.springframework.boot:spring-boot-starter-oauth2-resource-server",
                 ),
             ),
+        SpringFeature.SECURITY_OAUTH2_AUTH_SERVER to
+            listOf(
+                DependencyDeclaration(
+                    configuration = IMPLEMENTATION,
+                    notation = "org.springframework.boot:spring-boot-starter-security-oauth2-authorization-server",
+                ),
+            ),
+        SpringFeature.SECURITY_SAML2 to
+            listOf(
+                DependencyDeclaration(
+                    configuration = IMPLEMENTATION,
+                    notation = "org.springframework.boot:spring-boot-starter-security-saml2",
+                ),
+            ),
     )
 
 internal val securityTestCompanionDependencies: Map<SpringFeature, List<DependencyDeclaration>> =
@@ -51,6 +65,20 @@ internal val securityTestCompanionDependencies: Map<SpringFeature, List<Dependen
                 DependencyDeclaration(
                     configuration = TEST_IMPLEMENTATION,
                     notation = "org.springframework.boot:spring-boot-starter-security-oauth2-resource-server-test",
+                ),
+            ),
+        SpringFeature.SECURITY_OAUTH2_AUTH_SERVER to
+            listOf(
+                DependencyDeclaration(
+                    configuration = TEST_IMPLEMENTATION,
+                    notation = "org.springframework.boot:spring-boot-starter-security-oauth2-authorization-server-test",
+                ),
+            ),
+        SpringFeature.SECURITY_SAML2 to
+            listOf(
+                DependencyDeclaration(
+                    configuration = TEST_IMPLEMENTATION,
+                    notation = "org.springframework.boot:spring-boot-starter-security-saml2-test",
                 ),
             ),
     )

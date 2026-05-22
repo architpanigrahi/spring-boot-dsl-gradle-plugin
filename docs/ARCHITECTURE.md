@@ -52,6 +52,16 @@
   - Encapsulate cross-feature constraints.
   - Throw with corrective guidance when combinations are invalid.
 
+## Feature Domains
+
+- `web`: MVC or WebFlux plus HTTP client selection
+- `data`: JPA + JDBC drivers, Redis, MongoDB
+- `operations`: Actuator
+- `auth`: Security base plus OAuth2 client/resource-server/auth-server and SAML2
+- `migrations`: Flyway or Liquibase
+- `tooling`: Lombok
+- `testing`: Spring Boot test starter
+
 ## Dependency Mapping Model
 
 - Runtime feature dependencies live in module maps:
@@ -72,6 +82,8 @@ This split ensures:
   - `mvc()` and `reactiveServer()` cannot be selected together.
 - Web client-only guidance:
   - selecting only `restClient()` / `webClient()` is valid and emits diagnostics clarifying that no server stack is selected.
+- Auth advanced-options guidance:
+  - selecting advanced auth options without `security()` is valid and emits guidance with recommended combinations.
 - Migration engine exclusivity:
   - `flyway()` and `liquibase()` cannot be selected together.
 - Migration block requirement:

@@ -9,6 +9,7 @@ class FeatureValidator(
         listOf(
             WebStackCombinationExclusiveRule,
             WebClientsWithoutServerGuidanceRule,
+            AuthAdvancedWithoutSecurityGuidanceRule,
             MigrationEngineExclusiveRule,
         ),
 ) {

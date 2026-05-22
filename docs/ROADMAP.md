@@ -31,11 +31,14 @@ This roadmap keeps two constraints in balance:
 
 ### 2) Security Expansion
 
-- Add additional `auth` options with clear naming:
-  - `oauth2Login()`
-  - `saml2()`
-- Add corresponding companion test mappings.
-- Add validation guidance when advanced auth methods are selected without `security()`.
+- Completed in `0.1.x`:
+  - Added `oauth2ResourceServer()` naming for resource server semantics.
+  - Added `oauth2AuthServer()` and `saml2()`.
+  - Added companion test mappings for the above auth options.
+  - Added guidance warning when advanced auth options are selected without `security()`.
+- Next security items:
+  - clarify recommended auth combinations in troubleshooting docs.
+  - add advanced auth smoke scenarios in CI.
 
 ### 3) Data and Messaging Additions
 

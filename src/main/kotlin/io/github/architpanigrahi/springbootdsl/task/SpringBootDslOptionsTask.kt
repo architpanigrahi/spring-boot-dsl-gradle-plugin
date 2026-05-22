@@ -57,8 +57,10 @@ abstract class SpringBootDslOptionsTask : DefaultTask() {
 
             auth {
                 security()
-                jwt()
+                oauth2ResourceServer()
                 oauth2Client()
+                oauth2AuthServer()
+                saml2()
             }
 
             ops {
@@ -118,8 +120,12 @@ abstract class SpringBootDslOptionsTask : DefaultTask() {
                 Purpose: Application authentication and authorization.
                 Options:
                 - security() -> Adds spring-boot-starter-security.
-                - jwt() -> Adds spring-boot-starter-oauth2-resource-server.
+                - oauth2ResourceServer() -> Adds spring-boot-starter-oauth2-resource-server.
                 - oauth2Client() -> Adds spring-boot-starter-oauth2-client.
+                - oauth2AuthServer() -> Adds spring-boot-starter-security-oauth2-authorization-server.
+                - saml2() -> Adds spring-boot-starter-security-saml2.
+                Guidance:
+                - Advanced auth options without security() are allowed, but security() is recommended for most apps.
                 """.trimIndent()
             "ops" ->
                 """

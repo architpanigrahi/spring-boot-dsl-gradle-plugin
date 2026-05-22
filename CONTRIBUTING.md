@@ -19,7 +19,7 @@ Changes that impact compatibility must update `README.md` and `CHANGELOG.md`.
 ## DSL Design Rules
 
 - One DSL method represents one feature capability.
-- DSL methods must use explicit names (`actuator()`, `security()`, `jwt()`, `oauth2Client()`, `redis()`).
+- DSL methods must use explicit names (`actuator()`, `security()`, `oauth2ResourceServer()`, `oauth2Client()`, `oauth2AuthServer()`, `saml2()`, `redis()`).
 - Prefer colocating related capabilities in the same parent block (for example, web servers and web clients under `web { ... }`).
 - Companion test dependencies should be declared in `DependencyCatalog` companion maps and triggered only via `test { includeCompanionTests() }`.
 - Do not introduce hidden runtime behavior beyond plugin/dependency wiring.

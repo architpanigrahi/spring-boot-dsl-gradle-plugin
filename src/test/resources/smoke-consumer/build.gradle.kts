@@ -15,7 +15,7 @@ springBootPlugin {
     }
     auth {
         security()
-        jwt()
+        oauth2ResourceServer()
         oauth2Client()
     }
     migrations {

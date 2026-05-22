@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-05-21
+
+- Security semantics update:
+  - Added `auth { oauth2ResourceServer() }` and deprecated `jwt()`.
+  - Added `auth { oauth2AuthServer() }` and `auth { saml2() }`.
+- Added auth companion test mappings for OAuth2 authorization server and SAML2.
+- Added validation guidance warning when advanced auth options are selected without `security()`.
+
 ## [0.1.5] - 2026-05-21
 
 - Added CI publish stage as the final pipeline job.

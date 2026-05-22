@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.github.architpanigrahi"
-version = "0.1.5"
+version = "0.1.6"
 
 java {
     toolchain {
@@ -65,6 +65,8 @@ tasks.register("verifyCatalogCoordinates") {
                 "org.springframework.boot:spring-boot-starter-security",
                 "org.springframework.boot:spring-boot-starter-oauth2-client",
                 "org.springframework.boot:spring-boot-starter-oauth2-resource-server",
+                "org.springframework.boot:spring-boot-starter-security-oauth2-authorization-server",
+                "org.springframework.boot:spring-boot-starter-security-saml2",
                 "org.flywaydb:flyway-core",
                 "org.liquibase:liquibase-core",
                 "org.projectlombok:lombok",
@@ -80,6 +82,8 @@ tasks.register("verifyCatalogCoordinates") {
                 "org.springframework.boot:spring-boot-starter-security-test",
                 "org.springframework.boot:spring-boot-starter-security-oauth2-client-test",
                 "org.springframework.boot:spring-boot-starter-security-oauth2-resource-server-test",
+                "org.springframework.boot:spring-boot-starter-security-oauth2-authorization-server-test",
+                "org.springframework.boot:spring-boot-starter-security-saml2-test",
             ).distinct()
 
         val failedCoordinates = mutableListOf<String>()

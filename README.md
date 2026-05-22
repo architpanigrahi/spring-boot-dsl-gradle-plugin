@@ -15,7 +15,7 @@ Instead of repeating standard Spring Boot plugin and dependency declarations acr
 
 | Component | Supported |
 | --- | --- |
-| Plugin version | `0.1.5` |
+| Plugin version | `0.1.6` |
 | Gradle | `9.2.1+` |
 | Java toolchain | `21` |
 | Spring Boot line | `4.0.x` |
@@ -25,7 +25,7 @@ Instead of repeating standard Spring Boot plugin and dependency declarations acr
 
 ```kotlin
 plugins {
-    id("io.github.architpanigrahi.springbootdsl") version "0.1.5"
+    id("io.github.architpanigrahi.springbootdsl") version "0.1.6"
 }
 
 repositories {
@@ -45,8 +45,10 @@ springBootPlugin {
 
     auth {
         security()
-        jwt()
+        oauth2ResourceServer()
         oauth2Client()
+        oauth2AuthServer()
+        saml2()
     }
 
     migrations {
@@ -168,14 +170,19 @@ ops {
 ```kotlin
 auth {
     security()
-    jwt()
+    oauth2ResourceServer()
     oauth2Client()
+    oauth2AuthServer()
+    saml2()
 }
 ```
 
 - `security()` adds `spring-boot-starter-security`.
-- `jwt()` adds `spring-boot-starter-oauth2-resource-server`.
+- `oauth2ResourceServer()` adds `spring-boot-starter-oauth2-resource-server`.
 - `oauth2Client()` adds `spring-boot-starter-oauth2-client`.
+- `oauth2AuthServer()` adds `spring-boot-starter-security-oauth2-authorization-server`.
+- `saml2()` adds `spring-boot-starter-security-saml2`.
+- `jwt()` remains as a deprecated alias for `oauth2ResourceServer()`.
 
 ### Database Migrations
 
@@ -208,8 +215,10 @@ Companion test dependencies (when enabled):
 - `web.restClient()` -> `spring-boot-starter-restclient-test`
 - `web.webClient()` -> `spring-boot-starter-webclient-test`
 - `auth.security()` -> `spring-boot-starter-security-test`
-- `auth.jwt()` -> `spring-boot-starter-security-oauth2-resource-server-test`
+- `auth.oauth2ResourceServer()` -> `spring-boot-starter-security-oauth2-resource-server-test`
 - `auth.oauth2Client()` -> `spring-boot-starter-security-oauth2-client-test`
+- `auth.oauth2AuthServer()` -> `spring-boot-starter-security-oauth2-authorization-server-test`
+- `auth.saml2()` -> `spring-boot-starter-security-saml2-test`
 - `data.jpa()` -> `spring-boot-starter-data-jpa-test`
 - `data.redis()` -> `spring-boot-starter-data-redis-test`
 - `data.mongo()` -> `spring-boot-starter-data-mongodb-test`
@@ -231,8 +240,10 @@ Companion test dependencies (when enabled):
 | `data.redis()` | `org.springframework.boot:spring-boot-starter-data-redis` | `org.springframework.boot:spring-boot-starter-data-redis-test` | Optional module |
 | `data.mongo()` | `org.springframework.boot:spring-boot-starter-data-mongodb` | `org.springframework.boot:spring-boot-starter-data-mongodb-test` | Optional module |
 | `auth.security()` | `org.springframework.boot:spring-boot-starter-security` | `org.springframework.boot:spring-boot-starter-security-test` | Base security stack |
-| `auth.jwt()` | `org.springframework.boot:spring-boot-starter-oauth2-resource-server` | `org.springframework.boot:spring-boot-starter-security-oauth2-resource-server-test` | JWT resource server |
+| `auth.oauth2ResourceServer()` | `org.springframework.boot:spring-boot-starter-oauth2-resource-server` | `org.springframework.boot:spring-boot-starter-security-oauth2-resource-server-test` | OAuth2 resource server |
 | `auth.oauth2Client()` | `org.springframework.boot:spring-boot-starter-oauth2-client` | `org.springframework.boot:spring-boot-starter-security-oauth2-client-test` | OAuth2 client |
+| `auth.oauth2AuthServer()` | `org.springframework.boot:spring-boot-starter-security-oauth2-authorization-server` | `org.springframework.boot:spring-boot-starter-security-oauth2-authorization-server-test` | OAuth2 authorization server |
+| `auth.saml2()` | `org.springframework.boot:spring-boot-starter-security-saml2` | `org.springframework.boot:spring-boot-starter-security-saml2-test` | SAML2 support |
 | `ops.actuator()` | `org.springframework.boot:spring-boot-starter-actuator` | `org.springframework.boot:spring-boot-starter-actuator-test` | Ops endpoints |
 | `migrations.flyway()` | `org.flywaydb:flyway-core` | `org.springframework.boot:spring-boot-starter-test` | Exactly one migration engine required |
 | `migrations.liquibase()` | `org.liquibase:liquibase-core` | `org.springframework.boot:spring-boot-starter-test` | Exactly one migration engine required |
@@ -250,6 +261,7 @@ Companion test dependencies (when enabled):
 - `mvc()` and `reactiveServer()` are mutually exclusive server options.
 - `restClient()` and `webClient()` can be selected together.
 - Selecting only `restClient()`/`webClient()` is valid and treated as client-only configuration.
+- Advanced auth options without `security()` are allowed, but a guidance warning is emitted with recommended combinations.
 - `migrations { ... }` requires exactly one engine (`flyway()` or `liquibase()`).
 - `flyway()` and `liquibase()` are mutually exclusive and fail the build if selected together.
 - Companion test dependencies are only added when `includeCompanionTests()` is selected.
@@ -299,6 +311,7 @@ For in-depth help for one block:
 
 The plugin follows semantic versioning.
 
+- `0.1.6` — Security semantics expansion (`oauth2ResourceServer`, `oauth2AuthServer`, `saml2`) with auth guidance validation and companion tests.
 - `0.1.5` — CI final-stage auto-publish to Gradle Plugin Portal on version-line changes in `build.gradle.kts`.
 - `0.1.4` — macOS ARM64 `webClient()` Netty DNS native resolver auto-inclusion.
 - `0.1.3` — Web/client diagnostics improvements, capability matrix, all-block deep-help tests, and catalog coordinate verification task.
